@@ -241,3 +241,6 @@ def dict2list(res_dict):
     ret['sentiment'].sort()
     ret['hot'].sort()
     return ret
+
+#event_find(['President', 'Japan'],'China',['55', '100', '40', '10', '20', '11', '16'],'20180101','20181030')
+#print(event_find(['President','Japan'],'China',[55,100,40,10],'20180501','20180706'))
