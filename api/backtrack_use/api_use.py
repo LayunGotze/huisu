@@ -1,4 +1,5 @@
 import time
+import re
 from api.backtrack_use.mongodb_link import origin,events_tracking
 
 def timestr2stamp13(timestr):
@@ -244,3 +245,20 @@ def dict2list(res_dict):
 
 #event_find(['President', 'Japan'],'China',['55', '100', '40', '10', '20', '11', '16'],'20180101','20181030')
 #print(event_find(['President','Japan'],'China',[55,100,40,10],'20180501','20180706'))
+def timestr2stamp10(time_str):
+    #将'20180501'的字符串转换为10位时间戳
+    return int(time.mktime(time.strptime(time_str, "%Y%m%d")))
+
+start="20180501"
+end="20180503"
+dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
+print(dict)
+res=origin.find(dict)
+print(res.count())
+print(res[2]['s_cont'])
+name="Najibssss"
+res=re.search("Najib",res[2]['s_cont'])
+if res is None:
+    print("none")
+else:
+    print("success")

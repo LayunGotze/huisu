@@ -17,12 +17,12 @@
 
 <body>
     <div id="test">
-    <span>施事者姓名:</span><input type="text" name="actor1_1" id="actor1_2" />
+    <span>施事者姓名:</span><input type="text" name="actor1_1" id="actor1_1" />
     <span>受事者姓名:</span><input type="text" name="actor1_2" id="actor1_2" />
     <span>事件:</span><input type="text" name="event" id="event" />
     <span>开始时间</span><input type="date" name="start" id="start" />
     <span>截止时间</span><input type="date" name="end" id="end" />
-    <input type="button" onclick="click2()" value="Submit" />
+    <input type="button" onclick="click3()" value="Submit" />
     <button onclick="click2()"><span>添加</span></button>
     </div>
     <div id="container" style="min-width:400px;height:400px"></div>
@@ -31,11 +31,29 @@
 </html>
 
 <script>
-    var cnt=2;
+    var cnt=1;
     function click2()
     {
-        $('#test').append('<div><span>施事者姓名1:</span><input type="text" name="actor'+cnt+'_1" id="actor'+cnt+'_1" /><span>受事者姓名2:</span><input type="text" name="actor'+cnt+'_2" id="actor'+cnt+'_2" /></div>');
         cnt++;
+        $('#test').append('<div><span>施事者姓名1:</span><input type="text" name="actor'+cnt+'_1" id="actor'+cnt+'_1" /><span>受事者姓名2:</span><input type="text" name="actor'+cnt+'_2" id="actor'+cnt+'_2" /></div>');
+    }
+    function click3() {
+        var actor1_list=[],actor2_list=[];
+        for(var i=1;i<=cnt;i++)
+        {
+            actor1_list.push($('#actor'+i+'_1').val());
+            actor2_list.push($('#actor'+i+'_2').val());
+        }
+        event=$('#event').val();
+        startdate=$('#start').val();
+        enddate=$('#end').val();
+        startdate=date_split(startdate);
+        enddate=date_split(enddate);
+        console.log(actor1_list);
+        console.log(actor2_list);
+        console.log(event);
+        console.log(startdate);
+        console.log(enddate);
     }
     function split2list(text)
     {   //将字符串中的,分隔开，得到list
