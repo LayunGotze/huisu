@@ -249,16 +249,23 @@ def timestr2stamp10(time_str):
     #将'20180501'的字符串转换为10位时间戳
     return int(time.mktime(time.strptime(time_str, "%Y%m%d")))
 
-start="20180501"
-end="20180503"
-dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
-print(dict)
-res=origin.find(dict)
-print(res.count())
-print(res[2]['s_cont'])
-name="Najibssss"
-res=re.search("Najib",res[2]['s_cont'])
-if res is None:
-    print("none")
-else:
-    print("success")
+def no1_news_only_search(start,end):
+    #方案一，直接查询英文新闻，返回热度图
+    dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
+    print(dict)
+    cnt=0
+    res=origin.find(dict)
+    res=res[0:250]
+
+    for item in res:
+        try:
+            if 's_cont' in item:
+                res1=re.search("China",item['s_cont'])
+                res2=re.search("USA",item['s_cont'])
+                if res1 is not None and res2 is not None:
+                    cnt=cnt+1
+                    print(cnt)
+        except Exception as e:
+            print(e)
+            continue
+no1_news_only_search("20180501","20180503")

@@ -104,6 +104,17 @@
             draw_chart(data);
         });
     }
+    var data2={
+        'hot_max':1,
+        'hot_min':0,
+        'hot':[
+            [1370131200000, 0.7695],
+            [1370217600000, 0.7648],
+            [1370304000000, 0.7645],
+            [1370390400000, 0.7638],
+            [1370476800000, 0.7549]
+        ]
+    }
     function draw_chart(data) {
         //绘制热度和情感值曲线
         var chart = null;
@@ -112,8 +123,6 @@
         var color_zeroLine = "#DC143C";
         var item_distance = 200;
         var chart = null;
-        var sentiment_max = data['senti_max']; //要计算
-        var sentiment_min = data['senti_min'];
         var hot_max = data['hot_max'];
         var hot_min = data['hot_min'];
         chart = Highcharts.chart('container', {
@@ -149,30 +158,6 @@
                 }
             },
             yAxis: [
-                {// 情感值
-                    gridLineWidth: 1,//去掉 Y 轴的参照横线
-                    max: sentiment_max,   //设置最大值
-                    min: sentiment_min, //设置最大值
-                    startOnTick: false,//曲线起始允许不在刻度线上
-                    endOnTick: false,//曲线终止允许不在刻度线上
-                    plotLines: [
-                        {     //作零刻度线
-                            color: color_zeroLine,        //线的颜色，定义为红色
-                            dashStyle: 'solid',     //默认值，这里定义为实线
-                            value: 0,               //定义在那个值上显示标示线，这里是在x轴上刻度为3的值处垂直化一条线
-                            width: 1,               //标示线的宽度，5px
-                            zIndex: 3
-                        }
-                    ],
-                    title: { // y 轴的title
-                        text: ''
-                    },
-                    labels: {  //刻度线字符的颜色
-                        style: {
-                            color: color_sentiment
-                        }
-                    }
-                },
                 {//热度值
                     gridLineWidth: 0,//去掉 Y 轴的参照横线
                     max: hot_max, //设置最大值
@@ -220,21 +205,14 @@
                 }
             },
             series: [{
-                type: 'spline',
-                name: '热度值',
-                data: data["hot"],
-                selected: true,
-                yAxis: 1,
-                color: "#D32361"
-            },
-            {
                 type: 'area',
-                name: '情感值',
-                data: data["sentiment"],
+                name: '热度',
+                data: data["hot"],
                 yAxis: 0,
                 selected: true
-            }
+                },
             ]
         });
     }
+    //draw_chart(data2);
 </script>
