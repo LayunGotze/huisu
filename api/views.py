@@ -2,7 +2,7 @@ from django.shortcuts import render
 import requests
 import json
 from django.http import JsonResponse
-from api.backtrack_use.api_use import event_find,dict2list
+from api.backtrack_use.api_use import *
 # Create your views here.
 def test(request):
     return JsonResponse({'res':"success"})
@@ -31,3 +31,19 @@ def event_track(request):
     ret=event_find(actor1name,actor2name,code,start,end)
     ret=dict2list(ret)
     return JsonResponse(ret)
+
+def event_track_no1(request):
+    #方案1，根据提供的人名输入和时间直接搜索新闻数据
+    #返回热度图所需数据
+    actor1 = request.GET.getlist('actor1[]', '')
+    actor2 = request.GET.getlist('actor2[]', '')
+    start = request.GET.get('start', '')
+    end = request.GET.get('end', '')
+    print(actor1)
+    print(actor2)
+    print(start)
+    print(end)
+    #data=no1_news_only_search(actor1,actor2,start,end)
+    data={'20180501': 607, '20180502': 0, '20180503': 0, '20180504': 0, '20180505': 0, '20180506': 0}
+    data=data2html(data)
+    return JsonResponse(data)

@@ -54,6 +54,10 @@
         console.log(event);
         console.log(startdate);
         console.log(enddate);
+        $.get('/api/event1/',{'actor1':actor1_list,'actor2':actor2_list,'start':startdate,'end':enddate},function (data) {
+            console.log(data);
+            draw_chart(data);
+        })
     }
     function split2list(text)
     {   //将字符串中的,分隔开，得到list
@@ -123,8 +127,8 @@
         var color_zeroLine = "#DC143C";
         var item_distance = 200;
         var chart = null;
-        var hot_max = data['hot_max'];
-        var hot_min = data['hot_min'];
+        var hot_max = data['max_value'];
+        var hot_min = data['min_value'];
         chart = Highcharts.chart('container', {
             chart: {
                 zoomType: 'x'

@@ -4,5 +4,6 @@ from django.conf.urls import include, url
 
 urlpatterns=[
     url('test',test),
-    url('get_demo',get_demo)
+    url('get_demo',get_demo),
+    url('event1',event1)
 ]

@@ -249,23 +249,68 @@ def timestr2stamp10(time_str):
     #将'20180501'的字符串转换为10位时间戳
     return int(time.mktime(time.strptime(time_str, "%Y%m%d")))
 
-def no1_news_only_search(start,end):
+def no1_news_only_search(actor1,actor2,start,end):
     #方案一，直接查询英文新闻，返回热度图
+    #actor1,actor2为长度相等的数组，相同索引位置表示一组
+    start_int=timestr2stamp10(start)
+    end_int=timestr2stamp10(end)
+    ret_data = {start: 0}
+    begin = start_int + 86400
+    while begin<=end_int:
+        #生成从START到END的日期，ret_data为返回数据
+        time_tmp=time.strftime("%Y%m%d",time.localtime(begin))
+        ret_data[time_tmp]=0
+        begin=begin+86400
+    print(ret_data)
     dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
     print(dict)
     cnt=0
-    res=origin.find(dict)
-    res=res[0:250]
-
-    for item in res:
+    total=len(actor1)
+    res=origin.find(dict).limit(10000)
+    #10000条就很慢了
+    while True:
         try:
-            if 's_cont' in item:
-                res1=re.search("China",item['s_cont'])
-                res2=re.search("USA",item['s_cont'])
-                if res1 is not None and res2 is not None:
-                    cnt=cnt+1
-                    print(cnt)
+            item=res.next()
+            try:
+                if 's_cont' in item and 'o_gt' in item:
+                    cnt=0
+                    while cnt<total:
+                        res1 = re.search(actor1[cnt], item['s_cont'])
+                        res2 = re.search(actor2[cnt], item['s_cont'])
+                        if res1 is not None and res2 is not None:
+                            time_tmp=time.strftime("%Y%m%d",time.localtime(item['o_gt']))
+                            if time_tmp in ret_data:
+                                ret_data[time_tmp]=ret_data[time_tmp]+1
+                        cnt=cnt+1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
         except Exception as e:
             print(e)
-            continue
-no1_news_only_search("20180501","20180503")
+    print(ret_data)
+    return ret_data
+
+def data2html(data):
+    #将形如{'20180501': 607, '20180502': 0, '20180503': 0, '20180504': 0, '20180505': 0, '20180506': 0}
+    #的字典数据转换为前端输入的LIST数据
+    ret={'hot':[]}
+    max_value=-1
+    min_value=0
+    for key in data:
+        ret['hot'].append([timestr2stamp13(key),data[key]])
+        if data[key]>max_value:
+            max_value=data[key]
+    ret['hot'].sort()
+    ret['max_value']=max_value
+    ret['min_value']=min_value
+    print(ret)
+    return ret
+actor1=["China","Xi Jinping"]
+actor2=["USA","Trump"]
+data={'20180501': 607, '20180502': 0, '20180503': 0, '20180504': 0, '20180505': 0, '20180506': 0}
+print(data2html(data))
+#data=no1_news_only_search(actor1,actor2,"20180501","20180506")
+#print(data2html(data))
+#print(time.strftime("%Y%m%d",time.localtime(1495545426)))

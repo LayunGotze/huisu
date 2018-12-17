@@ -7,3 +7,6 @@ def test(request):
 
 def get_demo(request):
     return render(request,'get_demo.html')
+
+def event1(request):
+    return render(request,'input_demo.html')
