@@ -19,7 +19,17 @@
     <div id="test">
     <span>施事者姓名:</span><input type="text" name="actor1_1" id="actor1_1" />
     <span>受事者姓名:</span><input type="text" name="actor1_2" id="actor1_2" />
-    <span>事件:</span><input type="text" name="event" id="event" />
+    <span>事件:</span>
+        <span>事件</span>
+<select id="code" >
+    <option value ="口头合作">口头合作</option>
+    <option value ="实际合作">实际合作</option>
+    <option value ="合作">合作</option>
+    <option value ="口头冲突">口头冲突</option>
+    <option value ="实际冲突">实际冲突</option>
+    <option value ="冲突">冲突</option>
+    <option value ="全部">全部</option>
+</select>
     <span>开始时间</span><input type="date" name="start" id="start" />
     <span>截止时间</span><input type="date" name="end" id="end" />
     <input type="button" onclick="click3()" value="Submit" />
@@ -44,7 +54,7 @@
             actor1_list.push($('#actor'+i+'_1').val());
             actor2_list.push($('#actor'+i+'_2').val());
         }
-        event=$('#event').val();
+        event=$('#code option:selected ').val();
         startdate=$('#start').val();
         enddate=$('#end').val();
         startdate=date_split(startdate);
@@ -54,7 +64,7 @@
         console.log(event);
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/event1/',{'actor1':actor1_list,'actor2':actor2_list,'start':startdate,'end':enddate},function (data) {
+        $.get('/api/event4/',{'actor1':actor1_list,'actor2':actor2_list,'event':event,'start':startdate,'end':enddate},function (data) {
             console.log(data);
             draw_chart(data);
         })
@@ -108,17 +118,33 @@
             draw_chart(data);
         });
     }
-    var data2={
-        'hot_max':1,
-        'hot_min':0,
-        'hot':[
-            [1370131200000, 0.7695],
-            [1370217600000, 0.7648],
-            [1370304000000, 0.7645],
-            [1370390400000, 0.7638],
-            [1370476800000, 0.7549]
-        ]
-    }
+    var data2={'口头合作': {'hot': [[1522512000000, 6], [1522598400000, 13], [1522684800000, 25], [1522771200000, 38],
+            [1522857600000, 29], [1522944000000, 11], [1523289600000, 4], [1523721600000, 1], [1523808000000, 1],
+            [1524067200000, 89], [1524153600000, 103], [1524240000000, 57], [1524326400000, 77], [1524412800000, 138],
+            [1524499200000, 104], [1524585600000, 105], [1524672000000, 103], [1524758400000, 60], [1524844800000, 33],
+            [1524931200000, 21], [1525017600000, 21], [1525104000000, 25], [1525190400000, 38], [1525276800000, 50],
+            [1525363200000, 47], [1525449600000, 14], [1525536000000, 57], [1525622400000, 77], [1525708800000, 55],
+            [1525795200000, 79], [1525881600000, 30], [1525968000000, 40], [1526054400000, 18], [1527004800000, 1],
+            [1527091200000, 1], [1527177600000, 19], [1527350400000, 23], [1527436800000, 2]], 'max_value': 138, 'min_value': 0},
+        '实际合作': {'hot': [[1522512000000, 3], [1522598400000, 5], [1522684800000, 18], [1522771200000, 11], [1522857600000, 13],
+            [1522944000000, 11], [1523116800000, 1], [1523462400000, 1], [1523548800000, 1], [1523980800000, 1],
+            [1524067200000, 1], [1524153600000, 4], [1524326400000, 2], [1524412800000, 2], [1524499200000, 3],
+            [1524585600000, 4], [1524672000000, 8], [1524758400000, 6], [1524844800000, 4], [1524931200000, 6],
+            [1525017600000, 8], [1525104000000, 4], [1525190400000, 8], [1525276800000, 6], [1525363200000, 9],
+            [1525449600000, 4], [1525536000000, 6], [1525622400000, 5], [1525708800000, 7], [1525795200000, 9],
+            [1525881600000, 3], [1525968000000, 8], [1526054400000, 2], [1527177600000, 2], [1527264000000, 1],
+            [1527350400000, 3], [1527436800000, 1]], 'max_value': 18, 'min_value': 0},
+        '口头冲突': {'hot': [[1522512000000, 4], [1522598400000, 6], [1522684800000, 21], [1522771200000, 20],
+            [1522857600000, 21], [1522944000000, 33], [1523462400000, 2], [1524067200000, 97],
+            [1524153600000, 141], [1524240000000, 87], [1524326400000, 109], [1524412800000, 204],
+            [1524499200000, 182], [1524585600000, 128], [1524672000000, 126], [1524758400000, 82],
+            [1524844800000, 35], [1524931200000, 8], [1525017600000, 13], [1525104000000, 41],
+            [1525190400000, 22], [1525276800000, 36], [1525363200000, 24], [1525449600000, 16],
+            [1525536000000, 46], [1525622400000, 77], [1525708800000, 70], [1525795200000, 84],
+            [1525881600000, 31], [1525968000000, 13], [1526054400000, 19], [1526140800000, 1],
+            [1526918400000, 1], [1527004800000, 4], [1527091200000, 1], [1527177600000, 22],
+            [1527350400000, 30]], 'max_value': 204, 'min_value': 0},
+        '实际冲突':{'hot':[]}};
     function draw_chart(data) {
         //绘制热度和情感值曲线
         var chart = null;
@@ -127,8 +153,6 @@
         var color_zeroLine = "#DC143C";
         var item_distance = 200;
         var chart = null;
-        var hot_max = data['max_value'];
-        var hot_min = data['min_value'];
         chart = Highcharts.chart('container', {
             chart: {
                 zoomType: 'x'
@@ -162,10 +186,51 @@
                 }
             },
             yAxis: [
-                {//热度值
+                {// 口头合作
                     gridLineWidth: 0,//去掉 Y 轴的参照横线
-                    max: hot_max, //设置最大值
-                    min: hot_min,//设置最大值
+                    startOnTick: false,//曲线起始允许不在刻度线上
+                    endOnTick: false,//曲线终止允许不在刻度线上
+                    plotLines: [
+                        {     //作零刻度线
+                            color: '#d3f261',        //线的颜色，定义为红色
+                            dashStyle: 'solid',     //默认值，这里定义为实线
+                            value: 0,               //定义在那个值上显示标示线，这里是在x轴上刻度为3的值处垂直化一条线
+                            width: 2,               //标示线的宽度，5px
+                            zIndex: 3
+                        }
+                    ],
+                    title: { // y 轴的title
+                        text: ''
+                    },
+                    labels: {  //刻度线字符的颜色
+                        style: {
+                            color: '#eb2f96'
+                        }
+                    }
+                },
+                {// 实际合作
+                    gridLineWidth: 0,//去掉 Y 轴的参照横线
+                    startOnTick: false,//曲线起始允许不在刻度线上
+                    endOnTick: false,//曲线终止允许不在刻度线上
+                    plotLines: [
+                        {     //作零刻度线
+                            color: '#73d13d',        //线的颜色，定义为红色
+                            dashStyle: 'solid',     //默认值，这里定义为实线
+                            value: 0,               //定义在那个值上显示标示线，这里是在x轴上刻度为3的值处垂直化一条线
+                            width: 2,               //标示线的宽度，5px
+                            zIndex: 3
+                        }
+                    ],
+                    title: { // y 轴的title
+                        text: ''
+                    },
+                    labels: {  //刻度线字符的颜色
+                        style: {
+                            color: '#73d13d'
+                        }
+                    }
+                },
+                {//口头冲突
                     startOnTick: false,//曲线起始允许不在刻度线上
                     endOnTick: false,//曲线终止允许不在刻度线上
                     opposite: true,  //该曲线参考轴在右侧
@@ -174,7 +239,20 @@
                     },
                     labels: {  //刻度线字符的颜色
                         style: {
-                            color: color_heat
+                            color: '#ffa940'
+                        }
+                    }
+                },
+                {//实际冲突
+                    startOnTick: false,//曲线起始允许不在刻度线上
+                    endOnTick: false,//曲线终止允许不在刻度线上
+                    opposite: true,  //该曲线参考轴在右侧
+                    title: { // y 轴的title
+                        text: ''
+                    },
+                    labels: {  //刻度线字符的颜色
+                        style: {
+                            color: '#9254de'
                         }
                     }
                 }
@@ -209,11 +287,32 @@
                 }
             },
             series: [{
-                type: 'area',
-                name: '热度',
-                data: data["hot"],
-                yAxis: 0,
-                selected: true
+                    type: 'spline',
+                    name: '口头合作',
+                    data: data['口头合作']["hot"],
+                    yAxis: 0,
+                    selected: true
+                },
+                {
+                    type: 'spline',
+                    name: '实际合作',
+                    data: data['实际合作']["hot"],
+                    yAxis: 0,
+                    selected: true
+                },
+                {
+                    type: 'spline',
+                    name: '口头冲突',
+                    data: data['口头冲突']["hot"],
+                    yAxis: 0,
+                    selected: true
+                },
+                {
+                    type: 'spline',
+                    name: '实际冲突',
+                    data: data['实际冲突']["hot"],
+                    yAxis: 0,
+                    selected: true
                 },
             ]
         });

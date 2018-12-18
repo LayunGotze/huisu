@@ -249,6 +249,14 @@ def timestr2stamp10(time_str):
     #将'20180501'的字符串转换为10位时间戳
     return int(time.mktime(time.strptime(time_str, "%Y%m%d")))
 
+def gkg_person_list(data):
+    #将gkg中的person字符串转换成list
+    list=[]
+    if(data==""):
+        return list
+    list=data.split(';')
+    return list
+
 def data2html(data):
     #将形如{'20180501': 607, '20180502': 0, '20180503': 0, '20180504': 0, '20180505': 0, '20180506': 0}
     #的字典数据转换为前端输入的LIST数据
@@ -264,6 +272,17 @@ def data2html(data):
     ret['min_value']=min_value
     print(ret)
     return ret
+
+def dict_sort(dict,num):
+    #将dict按值排序，返回前num位的二维数组，每个数字包含key,value
+    items=dict.items()
+    backitem=[[v[1],v[0]] for v in items]
+    backitem.sort(reverse=True)
+    backitem=backitem[:10]
+    for item in backitem:
+        item.reverse()
+    return backitem
+
 
 def no1_news_only_search(actor1,actor2,start,end):
     #方案一，直接查询英文新闻，返回热度图
@@ -298,7 +317,7 @@ def no1_news_only_search(actor1,actor2,start,end):
                         if res1 is not None and res2 is not None:
                             time_tmp=time.strftime("%Y%m%d",time.localtime(item['o_gt']))
                             if time_tmp in ret_data:
-                                ret_data[time_tmp]=ret_data[time_tmp]+1
+                                ret_data[time_tmp]+=1
                         cnt+=1
             except:
                 continue
@@ -334,7 +353,7 @@ def no2_news_only_search(actor1,actor2,start,end):
             item=res.next()
             try:
                 if 's_cont' in item and 'o_gt' in item:
-                    # 查看原文，统计出现次数
+                    # 查看原文
                     cnt=0
                     while cnt<total:
                         res1 = re.search(actor1[cnt], item['s_cont'])
@@ -361,8 +380,92 @@ def no2_news_only_search(actor1,actor2,start,end):
     return ret_data
 
 
-actor1=["China","Xi Jinping"]
-actor2=["USA","Trump"]
+def no3_news_only_search(actor1,actor2,start,end):
+    #方案三，先查询英文新闻，再联立GKG数据库，返回人物图
+    #输入与no1相同,返回前10位人物及出现次数
+    ret_data = {}
+
+    dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
+
+    print(dict)
+    cnt=0
+    total=len(actor1)
+    res=origin.find(dict).limit(1000)
+    while True:
+        try:
+            item=res.next()
+            try:
+                if 's_cont' in item and 'o_gt' in item:
+                    # 查看原文，统计出现次数
+                    cnt=0
+                    while cnt<total:
+                        res1 = re.search(actor1[cnt], item['s_cont'])
+                        res2 = re.search(actor2[cnt], item['s_cont'])
+                        if res1 is not None and res2 is not None:
+                            #统计GKG数据库中的persons个数
+                            if item['gkg']['persons']!="":
+                                list=gkg_person_list(item['gkg']['persons'])
+                                for name in list:
+                                    if name not in ret_data:
+                                        ret_data[name]=1
+                                    else:
+                                        ret_data[name]+=1
+                            break
+                        cnt+=1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+    ret_data=dict_sort(ret_data,10)
+    name = []
+    value = []
+    for item in ret_data:
+        name.append(item[0])
+        value.append(item[1])
+    ret_data={}
+    ret_data['hot']=value
+    ret_data['person']=name
+    print(ret_data)
+    return ret_data
+
+def no4_news_only_search(actor1,actor2,event,start,end):
+    #方案四，先查询事件数据库，返回不同事件类型的热度图
+    #输入多了一个事件，返回的数据已经转化为前端接受的格式了
+    # actor1 = ["China", "China", "Japan", "", "USA"]
+    # actor2 = ["USA", "Trump", "USA", "China", ""]
+    # event = [1, 2, 3]
+    ret_data = {}
+    for event_code in event:
+        #循环搜索quadclass
+        ret_data[event_code]={}
+        cnt=0
+        total_length=len(actor1)
+        while cnt<total_length:
+            #对于每一对actor做一次查询，统计出现的次数
+            dict={'actor1name':actor1[cnt],'actor2name':actor2[cnt],'quadclass':event_code,'sqldate':{'$gte':start,'$lte':end}}
+            print(dict)
+            res=events_tracking.find(dict)
+            for item in res:
+                if 'sqldate' in item:
+                    if item['sqldate'] in ret_data[event_code]:
+                        ret_data[event_code][item['sqldate']]+=1
+                    else:
+                        ret_data[event_code][item['sqldate']]=1
+            cnt+=1
+    #按照quadclass依此进行类型转换，以适应前端输入格式
+    code_map={1:'口头合作',2:'实际合作',3:'口头冲突',4:'实际冲突'}
+    ret={}
+    for i in range(1, 5):
+        if i in ret_data:
+            ret[code_map[i]] = data2html(ret_data[i])
+        else:
+            ret[code_map[i]]={'hot':[]}
+    print(ret)
+    return ret
+
 
 #以下为no1_news_only_search和data2html的测试函数
 #data={'20180501': 607, '20180502': 0, '20180503': 0, '20180504': 0, '20180505': 0, '20180506': 0}
@@ -370,4 +473,12 @@ actor2=["USA","Trump"]
 #data=no2_news_only_search(actor1,actor2,"20180506","20180515")
 #print(data2html(data))
 #print(time.strftime("%Y%m%d",time.localtime(1495545426)))
+#print(data)
+
+
+
+#data=no3_news_only_search(actor1,actor2,"20180506","20180515")
+#print(data)
+
+#data=no4_news_only_search(actor1,actor2,event,"20180401","20181030")
 #print(data)
