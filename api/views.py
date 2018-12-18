@@ -43,7 +43,56 @@ def event_track_no1(request):
     print(actor2)
     print(start)
     print(end)
-    #data=no1_news_only_search(actor1,actor2,start,end)
-    data={'20180501': 607, '20180502': 0, '20180503': 0, '20180504': 0, '20180505': 0, '20180506': 0}
+    data=no1_news_only_search(actor1,actor2,start,end)
     data=data2html(data)
+    return JsonResponse(data)
+
+def event_track_no2(request):
+    #方案2，根据提供的人名输入和时间先搜索新闻数据，再联立事件数据库
+    #返回热度图所需数据
+    actor1 = request.GET.getlist('actor1[]', '')
+    actor2 = request.GET.getlist('actor2[]', '')
+    start = request.GET.get('start', '')
+    end = request.GET.get('end', '')
+    print(actor1)
+    print(actor2)
+    print(start)
+    print(end)
+    data=no2_news_only_search(actor1,actor2,start,end)
+    data=data2html(data)
+    return JsonResponse(data)
+
+def event_track_no3(request):
+
+    data={}
+    return JsonResponse(data)
+
+
+def event_track_no4(request):
+    data = {}
+    return JsonResponse(data)
+
+
+def event_track_no5(request):
+    data = {}
+    return JsonResponse(data)
+
+
+def event_track_no6(request):
+    data = {}
+    return JsonResponse(data)
+
+
+def event_track_no7(request):
+    data = {}
+    return JsonResponse(data)
+
+
+def event_track_no8(request):
+    data = {}
+    return JsonResponse(data)
+
+
+def event_track_no9(request):
+    data = {}
     return JsonResponse(data)
