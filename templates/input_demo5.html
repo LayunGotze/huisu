@@ -19,7 +19,17 @@
     <div id="test">
     <span>施事者姓名:</span><input type="text" name="actor1_1" id="actor1_1" />
     <span>受事者姓名:</span><input type="text" name="actor1_2" id="actor1_2" />
-    <span>事件:</span><input type="text" name="event" id="event" />
+        <span>事件:</span>
+        <span>事件</span>
+<select id="code" >
+    <option value ="口头合作">口头合作</option>
+    <option value ="实际合作">实际合作</option>
+    <option value ="合作">合作</option>
+    <option value ="口头冲突">口头冲突</option>
+    <option value ="实际冲突">实际冲突</option>
+    <option value ="冲突">冲突</option>
+    <option value ="全部">全部</option>
+</select>
     <span>开始时间</span><input type="date" name="start" id="start" />
     <span>截止时间</span><input type="date" name="end" id="end" />
     <input type="button" onclick="click3()" value="Submit" />
@@ -44,7 +54,7 @@
             actor1_list.push($('#actor'+i+'_1').val());
             actor2_list.push($('#actor'+i+'_2').val());
         }
-        event=$('#event').val();
+        event=$('#code option:selected ').val();
         startdate=$('#start').val();
         enddate=$('#end').val();
         startdate=date_split(startdate);
@@ -54,7 +64,7 @@
         console.log(event);
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/event1/',{'actor1':actor1_list,'actor2':actor2_list,'start':startdate,'end':enddate},function (data) {
+        $.get('/api/event5/',{'actor1':actor1_list,'actor2':actor2_list,'event':event,'start':startdate,'end':enddate},function (data) {
             console.log(data);
             draw_chart(data);
         })

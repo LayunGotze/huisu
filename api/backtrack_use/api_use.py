@@ -466,7 +466,66 @@ def no4_news_only_search(actor1,actor2,event,start,end):
     print(ret)
     return ret
 
+def no5_news_only_search(actor1,actor2,event,start,end):
+    #方案五，先查询事件数据库，再找回新闻本身，统计热度图
+    #输入多了一个事件
+    #输出需要data2html的过滤
+    # actor1 = ["", "USA"]
+    # actor2 = ["China", ""]
+    # event = [1, 2]
+    sent_set=set()
+    for event_code in event:
+        # 循环搜索quadclass
+        cnt = 0
+        total_length = len(actor1)
+        while cnt < total_length:
+            # 对于每一对actor做一次查询，统计出现的次数
+            dict = {'actor1name': actor1[cnt], 'actor2name': actor2[cnt], 'quadclass': event_code,
+                    'sqldate': {'$gte': start, '$lte': end}}
+            print(dict)
+            res = events_tracking.find(dict)
+            for item in res:
+                #获取sentid,存入SET中，便于统计新闻数据
+                sent_set.add(senid2index(item['sentid'])[0])
+            cnt += 1
+    sent_list=list(sent_set)
+    #print(sent_list)
 
+    #构造返回数据的字典，时间值
+    start_int = timestr2stamp10(start)
+    end_int = timestr2stamp10(end)
+    ret_data = {start: 0}
+    begin = start_int + 86400
+    while begin <= end_int:
+        # 生成从START到END的日期，ret_data为返回数据
+        time_tmp = time.strftime("%Y%m%d", time.localtime(begin))
+        ret_data[time_tmp] = 0
+        begin = begin + 86400
+    #print(ret_data)
+
+    # 获取原新闻数据
+    res = origin.find({'story_id': {"$in": sent_list}})
+    #print(res)
+
+    while True:
+        try:
+            item=res.next()
+            try:
+                if 'o_gt' in item:
+                    # 查看原文时间
+                    time_tmp = time.strftime("%Y%m%d", time.localtime(item['o_gt']))
+                    if time_tmp in ret_data:
+                        # 若时间在搜索范围内
+                        ret_data[time_tmp] += 1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+    print(ret_data)
+    return ret_data
 #以下为no1_news_only_search和data2html的测试函数
 #data={'20180501': 607, '20180502': 0, '20180503': 0, '20180504': 0, '20180505': 0, '20180506': 0}
 #print(data2html(data))
@@ -482,3 +541,7 @@ def no4_news_only_search(actor1,actor2,event,start,end):
 
 #data=no4_news_only_search(actor1,actor2,event,"20180401","20181030")
 #print(data)
+
+#data=no5_news_only_search(actor1,actor2,event,"20180506","20180515")
+#data=data2html(data)
+

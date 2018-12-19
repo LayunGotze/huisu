@@ -4,6 +4,8 @@ import json
 from django.http import JsonResponse
 from api.backtrack_use.api_use import *
 # Create your views here.
+
+event_map={'口头合作':[1],'实际合作':[2],'合作':[1,2],'口头冲突':[3],'实际冲突':[4],'冲突':[3,4],'全部':[1,2,3,4]}
 def test(request):
     return JsonResponse({'res':"success"})
 
@@ -78,8 +80,7 @@ def event_track_no3(request):
 
 
 def event_track_no4(request):
-    #方案4，根据ACTOR,EVENT和时间搜索时间数据库，对各类事件热度进行回溯
-    event_map={'口头合作':[1],'实际合作':[2],'合作':[1,2],'口头冲突':[3],'实际冲突':[4],'冲突':[3,4],'全部':[1,2,3,4]}
+    #方案4，根据ACTOR,EVENT和时间搜索事件数据库，对各类事件热度进行回溯
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     event=request.GET.get('event','口头合作')
@@ -96,7 +97,20 @@ def event_track_no4(request):
 
 
 def event_track_no5(request):
-    data = {}
+    # 方案5，根据ACTOR,EVENT和时间搜索事件数据库，再找回新闻数据库统计热度
+    actor1 = request.GET.getlist('actor1[]', '')
+    actor2 = request.GET.getlist('actor2[]', '')
+    event = request.GET.get('event', '口头合作')
+    start = request.GET.get('start', '')
+    end = request.GET.get('end', '')
+    event = event_map[event]
+    print(actor1)
+    print(actor2)
+    print(event)
+    print(start)
+    print(end)
+    data = no5_news_only_search(actor1, actor2, event, start, end)
+    data=data2html(data)
     return JsonResponse(data)
 
 
