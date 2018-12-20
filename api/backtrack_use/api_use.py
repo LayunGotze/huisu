@@ -2,6 +2,13 @@ import time
 import re
 from api.backtrack_use.mongodb_link import origin,events_tracking
 
+
+#国家映射词典，从'CHN'映射到中文名
+#还不完全
+country_dict={'CHN': '中国', 'USA': '美国', 'HKG': '香港',
+              'KOR': '韩国',  'RUS': '俄罗斯', 'ITA': '意大利', 'CZE': '捷克',  'JPN': '日本','FRA': '法国',
+              'GHA': '加纳', 'MEX': '墨西哥', 'NZL': '新西兰','EGY': '埃及'}
+
 def timestr2stamp13(timestr):
     #将形如"20180506"的时间字符串转换成13位时间戳整数，便于前端展示
     return int(time.mktime(time.strptime(timestr,'%Y%m%d'))*1000)
@@ -283,6 +290,15 @@ def dict_sort(dict,num):
         item.reverse()
     return backitem
 
+def gkg_country_extract(text):
+    #提取GKG中的国家名称
+    #返回提取到的三字符信息list
+    country_pattern = re.compile("[A-Z]{3}")
+    match = re.finditer(country_pattern, text)
+    res=[]
+    for item in match:
+        res.append(item.group(0))
+    return res
 
 def no1_news_only_search(actor1,actor2,start,end):
     #方案一，直接查询英文新闻，返回热度图
@@ -526,6 +542,144 @@ def no5_news_only_search(actor1,actor2,event,start,end):
             print(e)
     print(ret_data)
     return ret_data
+
+
+def no6_news_only_search(actor1,actor2,event,start,end):
+    #方案六，先查询事件数据库，再找GKG，统计国家事件数的统计
+    #输入多了一个事件
+    #最后经dict_sort过滤
+    # actor1 = ["", "USA"]
+    # actor2 = ["China", ""]
+    # event = [1, 2]
+    sent_set=set()
+    for event_code in event:
+        # 循环搜索quadclass
+        cnt = 0
+        total_length = len(actor1)
+        while cnt < total_length:
+            # 对于每一对actor做一次查询，统计出现的次数
+            dict = {'actor1name': actor1[cnt], 'actor2name': actor2[cnt], 'quadclass': event_code,
+                    'sqldate': {'$gte': start, '$lte': end}}
+            print(dict)
+            res = events_tracking.find(dict)
+            for item in res:
+                #获取sentid,存入SET中，便于统计新闻数据
+                sent_set.add(senid2index(item['sentid'])[0])
+            cnt += 1
+    sent_list=list(sent_set)
+    #print(sent_list)
+
+    ret_data={}
+
+    # 获取原新闻数据
+    res = origin.find({'story_id': {"$in": sent_list}})
+    #print(res)
+
+    while True:
+        try:
+            item=res.next()
+            try:
+                if 'gkg' in item and 'locations' in item['gkg']:
+                    # 查看gkg.locations
+                    if item['gkg']['locations']!="":
+                        #print(item['gkg']['locations'])
+                        location_list=gkg_country_extract(item['gkg']['locations'])
+                        #print(location_list)
+                        for country in location_list:
+                            if country in ret_data:
+                                ret_data[country]+=1
+                            else:
+                                ret_data[country]=1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+
+    #将ret_data中的国家代号映射为中文
+    country_data={}
+    for key in ret_data:
+        if key in country_dict:
+            country_data[country_dict[key]]=ret_data[key]
+    ret_data=dict_sort(country_data,10)
+    #print(ret_data)
+
+    #将国家名和热度值分开，使之适应前端输入
+    ret={'hot':[],'country':[]}
+    for item in ret_data:
+        ret['country'].append(item[0])
+        ret['hot'].append(item[1])
+    print(ret)
+    return ret
+
+def no7_news_only_search(actor1,actor2,start,end):
+    #方案七，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，再返回相关地名
+    #输入与no1相同,返回前10位地名及出现次数
+
+    # actor1 = ['Miller', 'Donald Trump']
+    # actor2 = ['Trump', 'Trump']
+    # data = no7_news_only_search(actor1, actor2, "20180330", "20180515")
+    ret_data = {}
+
+    dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
+
+    print(dict)
+    cnt=0
+    total=len(actor1)
+    res=origin.find(dict).limit(2000)
+    while True:
+        try:
+            item=res.next()
+            try:
+                if 'gkg' in item and 'persons' in item['gkg']:
+                    #查看item['gkg']['persons'] 查看是否包含提供人名
+                    if item['gkg']['persons']!="":
+                        name_set=set(gkg_person_list(item['gkg']['persons'])) #转换为SET方便判断
+                        #print(name_set)
+                        cnt=0
+                        while cnt<total:
+                            if actor1[cnt] in name_set and actor2[cnt] in name_set:
+                                #GKG中包含两个人名，可以统计地理信息了,同方案6的部分
+                                if item['gkg']['locations'] != "":
+                                    # print(item['gkg']['locations'])
+                                    location_list = gkg_country_extract(item['gkg']['locations'])
+                                    # print(location_list)
+                                    for country in location_list:
+                                        if country in ret_data:
+                                            ret_data[country] += 1
+                                        else:
+                                            ret_data[country] = 1
+                                break
+                            cnt+=1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+
+    # 将ret_data中的国家代号映射为中文
+    country_data = {}
+    for key in ret_data:
+        if key in country_dict:
+            country_data[country_dict[key]] = ret_data[key]
+    ret_data = dict_sort(country_data, 10)
+
+    #转换为适合前端展示的页面
+    name = []
+    value = []
+    for item in ret_data:
+        name.append(item[0])
+        value.append(item[1])
+    ret_data={}
+    ret_data['hot']=value
+    ret_data['country']=name
+    print(ret_data)
+    return ret_data
+
 #以下为no1_news_only_search和data2html的测试函数
 #data={'20180501': 607, '20180502': 0, '20180503': 0, '20180504': 0, '20180505': 0, '20180506': 0}
 #print(data2html(data))
@@ -545,3 +699,8 @@ def no5_news_only_search(actor1,actor2,event,start,end):
 #data=no5_news_only_search(actor1,actor2,event,"20180506","20180515")
 #data=data2html(data)
 
+#data=no6_news_only_search(actor1,actor2,event,"20180506","20180508")
+
+# actor1=['Miller','Donald Trump']
+# actor2=['Trump','Trump']
+# data=no7_news_only_search(actor1,actor2,"20180330","20180515")

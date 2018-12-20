@@ -115,12 +115,33 @@ def event_track_no5(request):
 
 
 def event_track_no6(request):
-    data = {}
+    # 方案6，根据ACTOR,EVENT和时间搜索事件数据库，再找回GKG统计国家热度
+    actor1 = request.GET.getlist('actor1[]', '')
+    actor2 = request.GET.getlist('actor2[]', '')
+    event = request.GET.get('event', '口头合作')
+    start = request.GET.get('start', '')
+    end = request.GET.get('end', '')
+    event = event_map[event]
+    print(actor1)
+    print(actor2)
+    print(event)
+    print(start)
+    print(end)
+    data = no6_news_only_search(actor1, actor2, event, start, end)
     return JsonResponse(data)
 
 
 def event_track_no7(request):
-    data = {}
+    # 方案7，根据ACTOR搜索GKG数据库，返回国家统计图
+    actor1 = request.GET.getlist('actor1[]', '')
+    actor2 = request.GET.getlist('actor2[]', '')
+    start = request.GET.get('start', '')
+    end = request.GET.get('end', '')
+    print(actor1)
+    print(actor2)
+    print(start)
+    print(end)
+    data = no7_news_only_search(actor1, actor2, start, end)
     return JsonResponse(data)
 
 
