@@ -54,7 +54,7 @@
         console.log(event);
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/event1/',{'actor1':actor1_list,'actor2':actor2_list,'start':startdate,'end':enddate},function (data) {
+        $.get('/api/event9/',{'actor1':actor1_list,'actor2':actor2_list,'start':startdate,'end':enddate},function (data) {
             console.log(data);
             draw_chart(data);
         })
@@ -108,17 +108,7 @@
             draw_chart(data);
         });
     }
-    var data2={
-        'hot_max':1,
-        'hot_min':0,
-        'hot':[
-            [1370131200000, 0.7695],
-            [1370217600000, 0.7648],
-            [1370304000000, 0.7645],
-            [1370390400000, 0.7638],
-            [1370476800000, 0.7549]
-        ]
-    }
+    var data2={'name': ['U.S.', 'Ohio', 'Frankfurt', 'London', 'Paris', 'Congress', 'television', 'military', 'Seattle', 'President'], 'hot': [11, 9, 9, 7, 6, 6, 5, 5, 4, 4]};
     function draw_chart(data) {
         //绘制热度和情感值曲线
         var chart = null;
@@ -127,45 +117,21 @@
         var color_zeroLine = "#DC143C";
         var item_distance = 200;
         var chart = null;
-        var hot_max = data['max_value'];
-        var hot_min = data['min_value'];
         chart = Highcharts.chart('container', {
             chart: {
-                zoomType: 'x'
+                type:'line'
             },
             title: {
-                text: '事件回溯曲线'
+                text: '事件回溯人物曲线'
             },
             xAxis: {
-                type: 'datetime',
-                dateTimeLabelFormats: {
-                    millisecond: '%H:%M:%S.%L',
-                    second: '%H:%M:%S',
-                    minute: '%H:%M',
-                    hour: '%H:%M',
-                    day: '%m-%d',
-                    week: '%m-%d',
-                    month: '%Y-%m',
-                    year: '%Y'
-                }
+                categories:data['name']
             },
             tooltip: {
-                dateTimeLabelFormats: {
-                    millisecond: '%H:%M:%S.%L',
-                    second: '%H:%M:%S',
-                    minute: '%H:%M',
-                    hour: '%H:%M',
-                    day: '%Y-%m-%d',
-                    week: '%m-%d',
-                    month: '%Y-%m',
-                    year: '%Y'
-                }
             },
             yAxis: [
                 {//热度值
                     gridLineWidth: 0,//去掉 Y 轴的参照横线
-                    max: hot_max, //设置最大值
-                    min: hot_min,//设置最大值
                     startOnTick: false,//曲线起始允许不在刻度线上
                     endOnTick: false,//曲线终止允许不在刻度线上
                     opposite: true,  //该曲线参考轴在右侧
@@ -210,7 +176,7 @@
             },
             series: [{
                 type: 'area',
-                name: '热度',
+                name: '人物热度',
                 data: data["hot"],
                 yAxis: 0,
                 selected: true

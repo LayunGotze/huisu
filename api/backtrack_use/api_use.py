@@ -743,6 +743,78 @@ def no8_news_only_search(actor1, actor2, start, end):
     ret_data=data2html(ret_data)
     print(ret_data)
     return ret_data
+
+def no9_news_only_search(actor1, actor2, start, end):
+    # 方案九，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，之后查找事件数据，统计人物出现次数前10位
+    # 最后要经过字典排序与处理，返回前10位
+
+
+    # actor1 = ['Miller', 'Donald Trump']
+    # actor2 = ['Trump', 'Trump']
+    # data = no9_news_only_search(actor1, actor2, "20180330", "20180515")
+
+    ret_data = {}
+
+    dict = {"o_gt": {"$gte": timestr2stamp10(start), "$lte": timestr2stamp10(end)}}
+
+    print(dict)
+    cnt = 0
+    total = len(actor1)
+    res = origin.find(dict).limit(2000)
+    while True:
+        try:
+            item = res.next()
+            try:
+                if 'gkg' in item and 'persons' in item['gkg']:
+                    # 查看item['gkg']['persons'] 查看是否包含提供人名
+                    if item['gkg']['persons'] != "":
+                        name_set = set(gkg_person_list(item['gkg']['persons']))  # 转换为SET方便判断
+                        # print(name_set)
+                        cnt = 0
+                        while cnt < total:
+                            if actor1[cnt] in name_set and actor2[cnt] in name_set:
+                                # GKG中包含两个人名，查看事件数据，统计人物出现次数
+                                event_cnt=0
+                                while str(event_cnt) in item['events']:
+                                    #遍历每个事件中的actor1name,actor2name
+                                    name1=item['events'][str(event_cnt)]['actor1name']
+                                    name2=item['events'][str(event_cnt)]['actor2name']
+                                    if name1!="":
+                                        if name1 not in ret_data:
+                                            ret_data[name1]=1
+                                        else:
+                                            ret_data[name1]+=1
+                                    if name2!="":
+                                        if name2 not in ret_data:
+                                            ret_data[name2]=1
+                                        else:
+                                            ret_data[name2]+=1
+                                    event_cnt+=1
+                                break
+                            cnt += 1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+
+    ret_data=dict_sort(ret_data,10)
+    name=[]
+    hot=[]
+    for item in ret_data:
+        name.append(item[0])
+        hot.append(item[1])
+
+    ret_data={}
+    ret_data['name']=name
+    ret_data['hot']=hot
+    print(ret_data)
+    return ret_data
+
+
+
 #以下为no1_news_only_search和data2html的测试函数
 #data={'20180501': 607, '20180502': 0, '20180503': 0, '20180504': 0, '20180505': 0, '20180506': 0}
 #print(data2html(data))
@@ -765,7 +837,7 @@ def no8_news_only_search(actor1, actor2, start, end):
 #data=no6_news_only_search(actor1,actor2,event,"20180506","20180508")
 actor1=['Miller','Donald Trump']
 actor2=['Trump','Trump']
-#data=no8_news_only_search(actor1,actor2,"20180330","20180515")
+#data=no9_news_only_search(actor1,actor2,"20180330","20180515")
 
 #{'o_gt': {'$gte': 1522368000, '$lte': 1526342400}}
 #{'o_gt': {'$gte': 1522339200, '$lte': 1526313600}}
