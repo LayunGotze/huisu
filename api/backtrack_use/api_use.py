@@ -334,6 +334,7 @@ def no1_news_only_search(actor1,actor2,start,end):
                             time_tmp=time.strftime("%Y%m%d",time.localtime(item['o_gt']))
                             if time_tmp in ret_data:
                                 ret_data[time_tmp]+=1
+                            break
                         cnt+=1
             except:
                 continue
@@ -680,6 +681,68 @@ def no7_news_only_search(actor1,actor2,start,end):
     print(ret_data)
     return ret_data
 
+def no8_news_only_search(actor1, actor2, start, end):
+    # 方案八，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，之后查找英文新闻，统计热度
+
+    # actor1=['Miller','Donald Trump']
+    # actor2=['Trump','Trump']
+    # data=no8_news_only_search(actor1,actor2,"20180330","20180515")
+
+
+    # 问题在于： 前后端调用的start与end比直接用字符串生成的时间快8个小时,用DJANGO和直接跑文件，产生的时间不一样？？？
+    # 根据时间统计热度，先按照时间戳生成要返回时间的字典
+    start_int = timestr2stamp10(start)
+    end_int = timestr2stamp10(end)
+    ret_data = {start: 0}
+    begin = start_int + 86400
+    while begin <= end_int:
+        # 生成从START到END的日期，ret_data为返回数据
+        time_tmp = time.strftime("%Y%m%d", time.localtime(begin))
+        ret_data[time_tmp] = 0
+        begin = begin + 86400
+    print(ret_data)
+
+    dict = {"o_gt": {"$gte": start_int , "$lte": end_int}}
+
+    print(dict)
+    cnt = 0
+    total = len(actor1)
+    res = origin.find(dict).limit(2000)
+    while True:
+        try:
+            item = res.next()
+            try:
+                if 'gkg' in item and 'persons' in item['gkg']:
+                    # 查看item['gkg']['persons'] 查看是否包含提供人名
+                    if item['gkg']['persons'] != "":
+                        name_set = set(gkg_person_list(item['gkg']['persons']))  # 转换为SET方便判断
+                        # print(name_set)
+                        cnt = 0
+                        while cnt < total:
+                            if actor1[cnt] in name_set and actor2[cnt] in name_set:
+                                # GKG中包含两个人名，之后查看英文新闻，统计热度
+
+                                #再判断英文新闻是否有这两个词
+                                res1 = re.search(actor1[cnt], item['s_cont'])
+                                res2 = re.search(actor2[cnt], item['s_cont'])
+                                if res1 is not None and res2 is not None:
+                                    time_tmp = time.strftime("%Y%m%d", time.localtime(item['o_gt']))
+                                    if time_tmp in ret_data:
+                                        ret_data[time_tmp] += 1
+                                break
+                            cnt += 1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+
+    #最后要经过data2html过滤，方便前端时间图的展示
+    ret_data=data2html(ret_data)
+    print(ret_data)
+    return ret_data
 #以下为no1_news_only_search和data2html的测试函数
 #data={'20180501': 607, '20180502': 0, '20180503': 0, '20180504': 0, '20180505': 0, '20180506': 0}
 #print(data2html(data))
@@ -700,7 +763,9 @@ def no7_news_only_search(actor1,actor2,start,end):
 #data=data2html(data)
 
 #data=no6_news_only_search(actor1,actor2,event,"20180506","20180508")
+actor1=['Miller','Donald Trump']
+actor2=['Trump','Trump']
+#data=no8_news_only_search(actor1,actor2,"20180330","20180515")
 
-# actor1=['Miller','Donald Trump']
-# actor2=['Trump','Trump']
-# data=no7_news_only_search(actor1,actor2,"20180330","20180515")
+#{'o_gt': {'$gte': 1522368000, '$lte': 1526342400}}
+#{'o_gt': {'$gte': 1522339200, '$lte': 1526313600}}

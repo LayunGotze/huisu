@@ -54,7 +54,7 @@
         console.log(event);
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/event1/',{'actor1':actor1_list,'actor2':actor2_list,'start':startdate,'end':enddate},function (data) {
+        $.get('/api/event8/',{'actor1':actor1_list,'actor2':actor2_list,'start':startdate,'end':enddate},function (data) {
             console.log(data);
             draw_chart(data);
         })

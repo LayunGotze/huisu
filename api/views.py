@@ -146,7 +146,16 @@ def event_track_no7(request):
 
 
 def event_track_no8(request):
-    data = {}
+    # 方案8，根据ACTOR搜索GKG数据库，再查看英文新闻，返回时间热度图
+    actor1 = request.GET.getlist('actor1[]', '')
+    actor2 = request.GET.getlist('actor2[]', '')
+    start = request.GET.get('start', '20181011')
+    end = request.GET.get('end', '20181001')
+    print(actor1)
+    print(actor2)
+    print(start)
+    print(end)
+    data = no8_news_only_search(actor1, actor2, start, end)
     return JsonResponse(data)
 
 
