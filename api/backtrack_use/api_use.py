@@ -33,9 +33,11 @@ def no1_news_only_search(actor1,actor2,start,end,num=0):
                     # 查看原文，统计出现次数
                     cnt=0
                     while cnt<total:
+                        # 查询文章中是否出现了这两个人名
                         res1 = re.search(actor1[cnt], item['s_cont'])
                         res2 = re.search(actor2[cnt], item['s_cont'])
                         if res1 is not None and res2 is not None:
+                            #若两个任命都有，将出现时间的热度加一
                             time_tmp=time.strftime("%Y%m%d",time.localtime(item['o_gt']))
                             if time_tmp in ret_data:
                                 ret_data[time_tmp]+=1
@@ -52,37 +54,32 @@ def no1_news_only_search(actor1,actor2,start,end,num=0):
     print(ret_data)
     return ret_data
 
-def no2_news_only_search(actor1,actor2,start,end):
+def no2_news_only_search(actor1,actor2,start,end,num=0):
     #方案二，先查询英文新闻，再联立事件数据库，返回热度图
     #输入输出与no1相同,返回的数据需要经过data2html转化为前端接受的格式
 
-    start_int=timestr2stamp10(start)
-    end_int=timestr2stamp10(end)
-    ret_data = {start: 0}
-    begin = start_int + 86400
-    while begin<=end_int:
-        #生成从START到END的日期，ret_data为返回数据
-        time_tmp=time.strftime("%Y%m%d",time.localtime(begin))
-        ret_data[time_tmp]=0
-        begin=begin+86400
-    print(ret_data)
+    ret_data = create_time_dict(start, end)
+
     dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
     print(dict)
     cnt=0
     total=len(actor1)
-    res=origin.find(dict).limit(1000)
+    if num==0:
+        res = origin.find(dict)
+    else:
+        res=origin.find(dict).limit(num)
     while True:
         try:
             item=res.next()
             try:
                 if 's_cont' in item and 'o_gt' in item:
-                    # 查看原文
+                    # 查询文章中是否出现了这两个人名
                     cnt=0
                     while cnt<total:
                         res1 = re.search(actor1[cnt], item['s_cont'])
                         res2 = re.search(actor2[cnt], item['s_cont'])
                         if res1 is not None and res2 is not None:
-                            #统计事件数据库中的事件个数
+                            #若包含两个人名，统计事件数据库中的事件个数
                             event_cnt = 0
                             while str(event_cnt) in item['events']:
                                 event_cnt += 1
@@ -99,14 +96,16 @@ def no2_news_only_search(actor1,actor2,start,end):
             break
         except Exception as e:
             print(e)
+
     ret_data = data2html(ret_data)
     print(ret_data)
     return ret_data
 
 
-def no3_news_only_search(actor1,actor2,start,end):
+def no3_news_only_search(actor1,actor2,start,end,num=0,top=10):
     #方案三，先查询英文新闻，再联立GKG数据库，返回人物图
-    #输入与no1相同,返回前10位人物及出现次数
+    #输入与no1相同,返回前TOP位人物及出现次数,默认是10
+    #返回的是前10位的排名数据，KEY和VALUE分开
     ret_data = {}
 
     dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
@@ -114,7 +113,11 @@ def no3_news_only_search(actor1,actor2,start,end):
     print(dict)
     cnt=0
     total=len(actor1)
-    res=origin.find(dict).limit(1000)
+
+    if num==0:
+        res=origin.find(dict)
+    else:
+        res = origin.find(dict).limit(num)
     while True:
         try:
             item=res.next()
@@ -126,7 +129,7 @@ def no3_news_only_search(actor1,actor2,start,end):
                         res1 = re.search(actor1[cnt], item['s_cont'])
                         res2 = re.search(actor2[cnt], item['s_cont'])
                         if res1 is not None and res2 is not None:
-                            #统计GKG数据库中的persons个数
+                            #若包含两个人名，统计GKG数据库中的persons个数
                             if item['gkg']['persons']!="":
                                 list=gkg_person_list(item['gkg']['persons'])
                                 for name in list:
@@ -143,15 +146,12 @@ def no3_news_only_search(actor1,actor2,start,end):
             break
         except Exception as e:
             print(e)
-    ret_data=dict_sort(ret_data,10)
-    name = []
-    value = []
-    for item in ret_data:
-        name.append(item[0])
-        value.append(item[1])
-    ret_data={}
-    ret_data['hot']=value
-    ret_data['person']=name
+
+    #将字典排序，取出前top位
+    ret_data=dict_sort(ret_data,top)
+    #将数据整合成适合前端输入的形式
+    ret_data=rankdata(ret_data,'person','hot')
+
     print(ret_data)
     return ret_data
 
@@ -526,17 +526,10 @@ actor1 = ['Xi Jinping', 'Donald Trump']
 actor2 = ['Trump', 'Trump']
 #data=no1_news_only_search(actor1,actor2,"20180506","20180515",num=2000)
 
+#data=no2_news_only_search(actor1,actor2,"20180506","20180515",num=2000)
 
-#data=no2_news_only_search(actor1,actor2,"20180506","20180515")
-#data=no2_news_only_search(actor1,actor2,"20180506","20180515")
-#print(data2html(data))
-#print(time.strftime("%Y%m%d",time.localtime(1495545426)))
-#print(data)
+#data=no3_news_only_search(actor1,actor2,"20180506","20180515",num=2000,top=11)
 
-
-
-#data=no3_news_only_search(actor1,actor2,"20180506","20180515")
-#print(data)
 
 #data=no4_news_only_search(actor1,actor2,event,"20180401","20181030")
 #print(data)

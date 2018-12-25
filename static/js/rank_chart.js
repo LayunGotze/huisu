@@ -1,56 +1,31 @@
 /**
  * Created by gaoyunchu on 18/12/25.
  */
-
-//  根据时间绘制热度曲线函数
-function draw_hot_chart(data, container_id, chart_name) {
+function draw_rank_chart(data, container_id, chart_name, key_name, value_name) {
     //绘制热度和情感值曲线
     //data是返回数据，container_id是要绘制的DIV标签的id,chart_name是表格名称
+    //key_name是data的键名称,value_name是data的值名称
     var chart = null;
     var color_sentiment = "#D32361";
     var color_heat = "#1D6DBE";
     var color_zeroLine = "#DC143C";
     var item_distance = 200;
     var chart = null;
-    var hot_max = data['max_value'];
-    var hot_min = data['min_value'];
     chart = Highcharts.chart(container_id, {
         chart: {
-            zoomType: 'x'
+            type: 'line'
         },
         title: {
             text: chart_name
         },
         xAxis: {
-            type: 'datetime',
-            dateTimeLabelFormats: {
-                millisecond: '%H:%M:%S.%L',
-                second: '%H:%M:%S',
-                minute: '%H:%M',
-                hour: '%H:%M',
-                day: '%m-%d',
-                week: '%m-%d',
-                month: '%Y-%m',
-                year: '%Y'
-            }
+            categories: data[key_name]
         },
         tooltip: {
-            dateTimeLabelFormats: {
-                millisecond: '%H:%M:%S.%L',
-                second: '%H:%M:%S',
-                minute: '%H:%M',
-                hour: '%H:%M',
-                day: '%Y-%m-%d',
-                week: '%m-%d',
-                month: '%Y-%m',
-                year: '%Y'
-            }
         },
         yAxis: [
             {//热度值
                 gridLineWidth: 0,//去掉 Y 轴的参照横线
-                max: hot_max, //设置最大值
-                min: hot_min,//设置最大值
                 startOnTick: false,//曲线起始允许不在刻度线上
                 endOnTick: false,//曲线终止允许不在刻度线上
                 opposite: true,  //该曲线参考轴在右侧
@@ -95,8 +70,8 @@ function draw_hot_chart(data, container_id, chart_name) {
         },
         series: [{
             type: 'area',
-            name: '热度',
-            data: data["hot"],
+            name: '人物热度',
+            data: data[value_name],
             yAxis: 0,
             selected: true
         },

@@ -65,12 +65,12 @@ def event_track_no2(request):
     print(actor2)
     print(start)
     print(end)
-    data=no2_news_only_search(actor1,actor2,start,end)
+    data=no2_news_only_search(actor1,actor2,start,end,num=2000)
     return JsonResponse(data)
 
 def event_track_no3(request):
     #方案3，根据提供的输入和时间先搜索新闻数据，再联立GKG数据库
-    #返回10个热门人物曲线所需数据
+    #返回top个热门人物曲线所需数据
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     start = request.GET.get('start', '')
@@ -79,7 +79,7 @@ def event_track_no3(request):
     print(actor2)
     print(start)
     print(end)
-    data = no3_news_only_search(actor1, actor2, start, end)
+    data = no3_news_only_search(actor1, actor2, start, end,num=2000,top=11)
     return JsonResponse(data)
 
 

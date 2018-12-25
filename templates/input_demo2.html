@@ -13,17 +13,20 @@
     <script src="https://img.hcharts.cn/highcharts/modules/exporting.js"></script>
     <script src="https://img.hcharts.cn/highcharts/modules/oldie.js"></script>
     <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+    {% load staticfiles %}
+    <script src="{% static 'js/hot_chart.js' %}"></script>
+    <script src="{% static 'js/info_base.js' %}"></script>
 </head>
 
 <body>
     <div id="test">
-    <span>施事者姓名:</span><input type="text" name="actor1_1" id="actor1_1" />
-    <span>受事者姓名:</span><input type="text" name="actor1_2" id="actor1_2" />
-    <span>事件:</span><input type="text" name="event" id="event" />
-    <span>开始时间</span><input type="date" name="start" id="start" />
-    <span>截止时间</span><input type="date" name="end" id="end" />
-    <input type="button" onclick="click3()" value="Submit" />
-    <button onclick="click2()"><span>添加</span></button>
+        <span>施事者姓名:</span><input type="text" name="actor1_1" id="actor1_1" />
+        <span>受事者姓名:</span><input type="text" name="actor1_2" id="actor1_2" />
+        <span>事件:</span><input type="text" name="event" id="event" />
+        <span>开始时间</span><input type="date" name="start" id="start" />
+        <span>截止时间</span><input type="date" name="end" id="end" />
+        <input type="button" onclick="click3()" value="Submit" />
+        <button onclick="click2()"><span>添加</span></button>
     </div>
     <div id="container" style="min-width:400px;height:400px"></div>
 </body>
@@ -31,192 +34,30 @@
 </html>
 
 <script>
-    var cnt=1;
-    function click2()
-    {
+    var cnt = 1;
+    function click2() {
         cnt++;
-        $('#test').append('<div><span>施事者姓名1:</span><input type="text" name="actor'+cnt+'_1" id="actor'+cnt+'_1" /><span>受事者姓名2:</span><input type="text" name="actor'+cnt+'_2" id="actor'+cnt+'_2" /></div>');
+        $('#test').append('<div><span>施事者姓名1:</span><input type="text" name="actor' + cnt + '_1" id="actor' + cnt + '_1" /><span>受事者姓名2:</span><input type="text" name="actor' + cnt + '_2" id="actor' + cnt + '_2" /></div>');
     }
     function click3() {
-        var actor1_list=[],actor2_list=[];
-        for(var i=1;i<=cnt;i++)
-        {
-            actor1_list.push($('#actor'+i+'_1').val());
-            actor2_list.push($('#actor'+i+'_2').val());
+        var actor1_list = [], actor2_list = [];
+        for (var i = 1; i <= cnt; i++) {
+            actor1_list.push($('#actor' + i + '_1').val());
+            actor2_list.push($('#actor' + i + '_2').val());
         }
-        event=$('#event').val();
-        startdate=$('#start').val();
-        enddate=$('#end').val();
-        startdate=date_split(startdate);
-        enddate=date_split(enddate);
+        event = $('#event').val();
+        startdate = $('#start').val();
+        enddate = $('#end').val();
+        startdate = date_split(startdate);
+        enddate = date_split(enddate);
         console.log(actor1_list);
         console.log(actor2_list);
         console.log(event);
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/event2/',{'actor1':actor1_list,'actor2':actor2_list,'start':startdate,'end':enddate},function (data) {
+        $.get('/api/event2/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
             console.log(data);
-            draw_chart(data);
+            draw_hot_chart(data, 'container', '事件热度曲线图');
         })
     }
-    function split2list(text)
-    {   //将字符串中的,分隔开，得到list
-        //缺少类型的转换 eventcode
-        list=text.split(',');
-        return list;
-    }
-    function date_split(date)
-    {
-        //将DATE转换为8位字符串形式
-        date_list=date.split('-');
-        res="";
-        if(date_list.length==3)
-            res=date_list[0]+date_list[1]+date_list[2];
-        return res;
-    }
-    function list2int(list)
-    {
-        //将EVENT中的字符串转换为INT
-        res=[];
-        l=list.length;
-        for(var i=0;i<l;i++)
-        {
-            res.push(parseInt(list[i]));
-        }
-        return res;
-    }
-    function click1()
-    {
-        //获取表单内容，转换为LIST并且将格式转换，发送GET
-        actor1 = $('#actor1').val();
-        actor2 = $('#actor2').val();
-        event=$('#event').val();
-        startdate=$('#start').val();
-        enddate=$('#end').val();
-        actor1=split2list(actor1);
-        actor2=split2list(actor2);
-        event=list2int(split2list(event));
-        startdate=date_split(startdate);
-        enddate=date_split(enddate);
-        console.log(actor1);
-        console.log(actor2);
-        console.log(event);
-        console.log(startdate);
-        console.log(enddate);
-        $.get('api/event',{'actor1':actor1,'actor2':actor2,'code':event,'start':startdate,'end':enddate},function (data) {
-            console.log(data);
-            draw_chart(data);
-        });
-    }
-    var data2={
-        'hot_max':1,
-        'hot_min':0,
-        'hot':[
-            [1370131200000, 0.7695],
-            [1370217600000, 0.7648],
-            [1370304000000, 0.7645],
-            [1370390400000, 0.7638],
-            [1370476800000, 0.7549]
-        ]
-    }
-    function draw_chart(data) {
-        //绘制热度和情感值曲线
-        var chart = null;
-        var color_sentiment = "#D32361";
-        var color_heat = "#1D6DBE";
-        var color_zeroLine = "#DC143C";
-        var item_distance = 200;
-        var chart = null;
-        var hot_max = data['max_value'];
-        var hot_min = data['min_value'];
-        chart = Highcharts.chart('container', {
-            chart: {
-                zoomType: 'x'
-            },
-            title: {
-                text: '事件回溯曲线'
-            },
-            xAxis: {
-                type: 'datetime',
-                dateTimeLabelFormats: {
-                    millisecond: '%H:%M:%S.%L',
-                    second: '%H:%M:%S',
-                    minute: '%H:%M',
-                    hour: '%H:%M',
-                    day: '%m-%d',
-                    week: '%m-%d',
-                    month: '%Y-%m',
-                    year: '%Y'
-                }
-            },
-            tooltip: {
-                dateTimeLabelFormats: {
-                    millisecond: '%H:%M:%S.%L',
-                    second: '%H:%M:%S',
-                    minute: '%H:%M',
-                    hour: '%H:%M',
-                    day: '%Y-%m-%d',
-                    week: '%m-%d',
-                    month: '%Y-%m',
-                    year: '%Y'
-                }
-            },
-            yAxis: [
-                {//热度值
-                    gridLineWidth: 0,//去掉 Y 轴的参照横线
-                    max: hot_max, //设置最大值
-                    min: hot_min,//设置最大值
-                    startOnTick: false,//曲线起始允许不在刻度线上
-                    endOnTick: false,//曲线终止允许不在刻度线上
-                    opposite: true,  //该曲线参考轴在右侧
-                    title: { // y 轴的title
-                        text: ''
-                    },
-                    labels: {  //刻度线字符的颜色
-                        style: {
-                            color: color_heat
-                        }
-                    }
-                }
-            ],
-            legend: {
-                enabled: true
-            },
-            plotOptions: {
-                area: {
-                    fillColor: {
-                        linearGradient: {
-                            x1: 0,
-                            y1: 0,
-                            x2: 0,
-                            y2: 1
-                        },
-                        stops: [
-                            [0, Highcharts.getOptions().colors[0]],
-                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                        ]
-                    },
-                    marker: {
-                        radius: 2
-                    },
-                    lineWidth: 1,
-                    states: {
-                        hover: {
-                            lineWidth: 1
-                        }
-                    },
-                    threshold: null
-                }
-            },
-            series: [{
-                type: 'area',
-                name: '热度',
-                data: data["hot"],
-                yAxis: 0,
-                selected: true
-                },
-            ]
-        });
-    }
-    //draw_chart(data2);
 </script>

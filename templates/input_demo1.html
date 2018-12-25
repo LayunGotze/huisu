@@ -57,7 +57,7 @@
         console.log(enddate);
         $.get('/api/event1/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
             console.log(data);
-            draw_chart(data, 'container','时间热度曲线');
+            draw_hot_chart(data, 'container','时间热度曲线');
         })
     };
 </script>

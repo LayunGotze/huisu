@@ -62,12 +62,12 @@ def gkg_country_extract(text):
         res.append(item.group(0))
     return res
 
-def dict_sort(dict,num):
+def dict_sort(dict,top):
     #将dict按值排序，返回前num位的二维数组，每个数字包含key,value
     items=dict.items()
     backitem=[[v[1],v[0]] for v in items]
     backitem.sort(reverse=True)
-    backitem=backitem[:10]
+    backitem=backitem[:top]
     for item in backitem:
         item.reverse()
     return backitem
@@ -87,3 +87,14 @@ def data2html(data):
     ret['min_value']=min_value
     print(ret)
     return ret
+
+def rankdata(data,key_name,value_name):
+    #将dict_sort输出的排名字典，转换为前端适合的字典形式
+    #从[['Donald Trump', 103], ['Trump', 76], ['Buffett', 13], ['Emmanuel Macron', 10], ['Mueller', 9], ['Kim Jong-un', 9], ['Barack Obama', 9], ['Wolf', 8], ['Stormy Daniels', 8], ['Robert Mueller', 8]]
+    #到{'hot': [103, 76, 13, 10, 9, 9, 9, 8, 8, 8], 'person': ['Donald Trump', 'Trump', 'Buffett', 'Emmanuel Macron', 'Mueller', 'Kim Jong-un', 'Barack Obama', 'Wolf', 'Stormy Daniels', 'Robert Mueller']}
+    #data是原始数据，key_name是要生成的名称（国家或者人名），value_name是值的名称
+    ret_data={key_name:[],value_name:[]}
+    for item in data:
+        ret_data[key_name].append(item[0])
+        ret_data[value_name].append(item[1])
+    return ret_data
