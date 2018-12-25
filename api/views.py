@@ -3,7 +3,13 @@ import requests
 import json
 from django.http import JsonResponse
 from api.backtrack_use.api_use import *
+from api.backtrack_use.event_basic_use import *
 # Create your views here.
+
+"""
+9个方案的接口视图函数，接受前端发来的GET请求参数，返回JSON数据，前端直接展示
+具体用到的函数可见api.backtrack_use.api_use
+"""
 
 event_map={'口头合作':[1],'实际合作':[2],'合作':[1,2],'口头冲突':[3],'实际冲突':[4],'冲突':[3,4],'全部':[1,2,3,4]}
 def test(request):
@@ -45,8 +51,7 @@ def event_track_no1(request):
     print(actor2)
     print(start)
     print(end)
-    data=no1_news_only_search(actor1,actor2,start,end)
-    data=data2html(data)
+    data=no1_news_only_search(actor1,actor2,start,end,num=2000)
     return JsonResponse(data)
 
 def event_track_no2(request):
@@ -61,7 +66,6 @@ def event_track_no2(request):
     print(start)
     print(end)
     data=no2_news_only_search(actor1,actor2,start,end)
-    data=data2html(data)
     return JsonResponse(data)
 
 def event_track_no3(request):
@@ -110,7 +114,6 @@ def event_track_no5(request):
     print(start)
     print(end)
     data = no5_news_only_search(actor1, actor2, event, start, end)
-    data=data2html(data)
     return JsonResponse(data)
 
 
