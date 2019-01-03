@@ -319,7 +319,7 @@ def no6_news_only_search(actor1,actor2,event,start,end,top):
     print(ret_data)
     return ret_data
 
-def no7_news_only_search(actor1,actor2,start,end):
+def no7_news_only_search(actor1,actor2,start,end,top,num=0):
     #方案七，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，再返回相关地名
     #输入与no1相同,返回前10位地名及出现次数
 
@@ -333,7 +333,10 @@ def no7_news_only_search(actor1,actor2,start,end):
     print(dict)
     cnt=0
     total=len(actor1)
-    res=origin.find(dict).limit(2000)
+    if num==0:
+        res = origin.find(dict)
+    else:
+        res=origin.find(dict).limit(num)
     while True:
         try:
             item=res.next()
@@ -371,21 +374,14 @@ def no7_news_only_search(actor1,actor2,start,end):
     for key in ret_data:
         if key in country_dict:
             country_data[country_dict[key]] = ret_data[key]
-    ret_data = dict_sort(country_data, 10)
-
-    #转换为适合前端展示的页面
-    name = []
-    value = []
-    for item in ret_data:
-        name.append(item[0])
-        value.append(item[1])
-    ret_data={}
-    ret_data['hot']=value
-    ret_data['country']=name
+    # 将字典排序，取出前top位
+    ret_data = dict_sort(country_data, top)
+    # 将数据整合成适合前端输入的形式
+    ret_data = rankdata(ret_data, 'name', 'hot')
     print(ret_data)
     return ret_data
 
-def no8_news_only_search(actor1, actor2, start, end):
+def no8_news_only_search(actor1, actor2, start, end,num=0):
     # 方案八，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，之后查找英文新闻，统计热度
 
     # actor1=['Miller','Donald Trump']
@@ -395,23 +391,17 @@ def no8_news_only_search(actor1, actor2, start, end):
 
     # 问题在于： 前后端调用的start与end比直接用字符串生成的时间快8个小时,用DJANGO和直接跑文件，产生的时间不一样？？？
     # 根据时间统计热度，先按照时间戳生成要返回时间的字典
-    start_int = timestr2stamp10(start)
-    end_int = timestr2stamp10(end)
-    ret_data = {start: 0}
-    begin = start_int + 86400
-    while begin <= end_int:
-        # 生成从START到END的日期，ret_data为返回数据
-        time_tmp = time.strftime("%Y%m%d", time.localtime(begin))
-        ret_data[time_tmp] = 0
-        begin = begin + 86400
-    print(ret_data)
+    ret_data=create_time_dict(start,end)
 
-    dict = {"o_gt": {"$gte": start_int , "$lte": end_int}}
+    dict = {"o_gt": {"$gte": timestr2stamp10(start), "$lte": timestr2stamp10(end)}}
 
     print(dict)
     cnt = 0
     total = len(actor1)
-    res = origin.find(dict).limit(2000)
+    if num==0:
+        res = origin.find(dict)
+    else:
+        res=origin.find(dict).limit(num)
     while True:
         try:
             item = res.next()
@@ -448,7 +438,7 @@ def no8_news_only_search(actor1, actor2, start, end):
     print(ret_data)
     return ret_data
 
-def no9_news_only_search(actor1, actor2, start, end):
+def no9_news_only_search(actor1, actor2, start, end,top,num=0):
     # 方案九，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，之后查找事件数据，统计人物出现次数前10位
     # 最后要经过字典排序与处理，返回前10位
 
@@ -464,7 +454,10 @@ def no9_news_only_search(actor1, actor2, start, end):
     print(dict)
     cnt = 0
     total = len(actor1)
-    res = origin.find(dict).limit(2000)
+    if num==0:
+        res = origin.find(dict)
+    else:
+        res=origin.find(dict).limit(num)
     while True:
         try:
             item = res.next()
@@ -504,16 +497,10 @@ def no9_news_only_search(actor1, actor2, start, end):
         except Exception as e:
             print(e)
 
-    ret_data=dict_sort(ret_data,10)
-    name=[]
-    hot=[]
-    for item in ret_data:
-        name.append(item[0])
-        hot.append(item[1])
-
-    ret_data={}
-    ret_data['name']=name
-    ret_data['hot']=hot
+    # 将字典排序，取出前top位
+    ret_data = dict_sort(ret_data, top)
+    # 将数据整合成适合前端输入的形式
+    ret_data = rankdata(ret_data, 'name', 'hot')
     print(ret_data)
     return ret_data
 
@@ -526,9 +513,10 @@ def no9_news_only_search(actor1, actor2, start, end):
 
 #data=no3_news_only_search(actor1,actor2,"20180506","20180515",num=2000,top=11)
 
-actor1 = ['Xi Jinping', 'Donald Trump','','USA']
-actor2 = ['Trump', 'Trump','China','']
-event=[3,4]
+# actor1 = ['Xi Jinping', 'Donald Trump','','USA']
+# actor2 = ['Trump', 'Trump','China','']
+# event=[3,4]
+
 #data=no4_news_only_search(actor1,actor2,event,"20180401","20180420")
 #print(data)
 
@@ -536,10 +524,13 @@ event=[3,4]
 
 
 #data=no6_news_only_search(actor1,actor2,event,"20180401","20180420",20)
-# actor1=['Miller','Donald Trump']
-# actor2=['Trump','Trump']
-#data=no9_news_only_search(actor1,actor2,"20180330","20180515")
+actor1=['Miller','Donald Trump']
+actor2=['Trump','Trump']
+#data=no7_news_only_search(actor1,actor2,"20180330","20180515",16,2000)
 
+#data=no8_news_only_search(actor1,actor2,"20180330","20180515",2000)
+
+#data=no9_news_only_search(actor1,actor2,"20180330","20180515",16,2000)
 #{'o_gt': {'$gte': 1522368000, '$lte': 1526342400}}
 #{'o_gt': {'$gte': 1522339200, '$lte': 1526313600}}
 #create_time_dict("20180501","20180515")

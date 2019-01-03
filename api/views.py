@@ -140,6 +140,8 @@ def event_track_no6(request):
 
 def event_track_no7(request):
     # 方案7，根据ACTOR搜索GKG数据库，返回国家统计图
+    res={'name': ['美国', '印尼', '俄罗斯', '伊朗', '以色列', '韩国', '德国', '朝鲜 北朝鲜', '圣文森特和格林纳丁斯', '英国', '中国', '肯尼亚', '洪都拉斯', '法国', '日本', '中国香港'], 'hot': [144, 51, 25, 23, 15, 11, 11, 9, 8, 7, 7, 5, 5, 3, 3, 3]}
+    return JsonResponse(res)
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     start = request.GET.get('start', '')
@@ -154,6 +156,8 @@ def event_track_no7(request):
 
 def event_track_no8(request):
     # 方案8，根据ACTOR搜索GKG数据库，再查看英文新闻，返回时间热度图
+    res={'hot': [[1522339200000, 55], [1522425600000, 0], [1522512000000, 0], [1522598400000, 0], [1522684800000, 0], [1522771200000, 0], [1522857600000, 0], [1522944000000, 0], [1523030400000, 0], [1523116800000, 0], [1523203200000, 0], [1523289600000, 0], [1523376000000, 0], [1523462400000, 0], [1523548800000, 0], [1523635200000, 0], [1523721600000, 0], [1523808000000, 0], [1523894400000, 0], [1523980800000, 0], [1524067200000, 0], [1524153600000, 0], [1524240000000, 0], [1524326400000, 0], [1524412800000, 0], [1524499200000, 0], [1524585600000, 0], [1524672000000, 0], [1524758400000, 0], [1524844800000, 0], [1524931200000, 0], [1525017600000, 0], [1525104000000, 0], [1525190400000, 0], [1525276800000, 0], [1525363200000, 0], [1525449600000, 0], [1525536000000, 0], [1525622400000, 0], [1525708800000, 0], [1525795200000, 0], [1525881600000, 0], [1525968000000, 0], [1526054400000, 0], [1526140800000, 0], [1526227200000, 0], [1526313600000, 0]], 'max_value': 55, 'min_value': 0}
+    return JsonResponse(res)
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     start = request.GET.get('start', '20181011')
@@ -168,6 +172,8 @@ def event_track_no8(request):
 
 def event_track_no9(request):
     # 方案9，根据ACTOR搜索GKG数据库，再查看事件数据库，返回10个最热人物
+    res={'name': ['U.S.', 'Ohio', 'Frankfurt', 'London', 'Paris', 'Congress', 'television', 'military', 'Seattle', 'President', 'North Korea', 'Iran', 'women', 'the White House', 'president', 'population'], 'hot': [11, 9, 9, 7, 6, 6, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3]}
+    return JsonResponse(res)
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     start = request.GET.get('start', '20181011')
