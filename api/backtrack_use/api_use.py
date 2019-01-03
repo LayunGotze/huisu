@@ -2,6 +2,7 @@ import time
 import re
 from api.backtrack_use.mongodb_link import origin,events_tracking
 from api.backtrack_use.event_basic_use import *
+#from progressbar import *
 """
 事件回溯9个方案所需要的接口函数
 每个函数输入相关信息，进行查询统计，返回前端可展示的数据
@@ -25,6 +26,8 @@ def no1_news_only_search(actor1,actor2,start,end,num=0):
     else:
         res=origin.find(dict).limit(num)
     #10000条就很慢了
+
+    #pbar = ProgressBar().start()
     while True:
         try:
             item=res.next()
@@ -51,6 +54,8 @@ def no1_news_only_search(actor1,actor2,start,end,num=0):
         except Exception as e:
             print(e)
     ret_data=data2html(ret_data)
+
+    #pbar.finish()
     print(ret_data)
     return ret_data
 
@@ -216,15 +221,7 @@ def no5_news_only_search(actor1,actor2,event,start,end):
     #print(sent_list)
 
     #构造返回数据的字典，时间值
-    start_int = timestr2stamp10(start)
-    end_int = timestr2stamp10(end)
-    ret_data = {start: 0}
-    begin = start_int + 86400
-    while begin <= end_int:
-        # 生成从START到END的日期，ret_data为返回数据
-        time_tmp = time.strftime("%Y%m%d", time.localtime(begin))
-        ret_data[time_tmp] = 0
-        begin = begin + 86400
+    ret_data = create_time_dict(start, end)
     #print(ret_data)
 
     # 获取原新闻数据
@@ -254,7 +251,7 @@ def no5_news_only_search(actor1,actor2,event,start,end):
     return ret_data
 
 
-def no6_news_only_search(actor1,actor2,event,start,end):
+def no6_news_only_search(actor1,actor2,event,start,end,top):
     #方案六，先查询事件数据库，再找GKG，统计国家事件数的统计
     #输入多了一个事件
     #最后经dict_sort过滤
@@ -308,21 +305,19 @@ def no6_news_only_search(actor1,actor2,event,start,end):
         except Exception as e:
             print(e)
 
-    #将ret_data中的国家代号映射为中文
+    # 将ret_data中的国家代号映射为中文
     country_data={}
     for key in ret_data:
         if key in country_dict:
             country_data[country_dict[key]]=ret_data[key]
-    ret_data=dict_sort(country_data,10)
-    #print(ret_data)
+    # 将字典排序，取出前top位
+    ret_data = dict_sort(country_data, top)
+    # 将数据整合成适合前端输入的形式
+    ret_data = rankdata(ret_data, 'country', 'hot')
 
-    #将国家名和热度值分开，使之适应前端输入
-    ret={'hot':[],'country':[]}
-    for item in ret_data:
-        ret['country'].append(item[0])
-        ret['hot'].append(item[1])
-    print(ret)
-    return ret
+
+    print(ret_data)
+    return ret_data
 
 def no7_news_only_search(actor1,actor2,start,end):
     #方案七，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，再返回相关地名
@@ -522,22 +517,25 @@ def no9_news_only_search(actor1, actor2, start, end):
     print(ret_data)
     return ret_data
 
-actor1 = ['Xi Jinping', 'Donald Trump']
-actor2 = ['Trump', 'Trump']
-#data=no1_news_only_search(actor1,actor2,"20180506","20180515",num=2000)
+# actor1 = ['Xi Jinping', 'China']
+# actor2 = ['Trump', 'USA']
+
+#data=no1_news_only_search(actor1,actor2,"20180401","20180420",num=2000)
 
 #data=no2_news_only_search(actor1,actor2,"20180506","20180515",num=2000)
 
 #data=no3_news_only_search(actor1,actor2,"20180506","20180515",num=2000,top=11)
 
-
-#data=no4_news_only_search(actor1,actor2,event,"20180401","20181030")
+actor1 = ['Xi Jinping', 'Donald Trump','','USA']
+actor2 = ['Trump', 'Trump','China','']
+event=[3,4]
+#data=no4_news_only_search(actor1,actor2,event,"20180401","20180420")
 #print(data)
 
-#data=no5_news_only_search(actor1,actor2,event,"20180506","20180515")
-#data=data2html(data)
+#data=no5_news_only_search(actor1,actor2,event,"20180401","20180420")
 
-# #data=no6_news_only_search(actor1,actor2,event,"20180506","20180508")
+
+#data=no6_news_only_search(actor1,actor2,event,"20180401","20180420",20)
 # actor1=['Miller','Donald Trump']
 # actor2=['Trump','Trump']
 #data=no9_news_only_search(actor1,actor2,"20180330","20180515")

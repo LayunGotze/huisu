@@ -102,6 +102,8 @@ def event_track_no4(request):
 
 def event_track_no5(request):
     # 方案5，根据ACTOR,EVENT和时间搜索事件数据库，再找回新闻数据库统计热度
+    res={'hot': [[1522512000000, 4], [1522598400000, 4], [1522684800000, 10], [1522771200000, 22], [1522857600000, 12], [1522944000000, 46], [1523030400000, 0], [1523116800000, 0], [1523203200000, 0], [1523289600000, 0], [1523376000000, 0], [1523462400000, 0], [1523548800000, 0], [1523635200000, 0], [1523721600000, 0], [1523808000000, 0], [1523894400000, 0], [1523980800000, 0], [1524067200000, 2], [1524153600000, 33]], 'max_value': 46, 'min_value': 0}
+    return JsonResponse(res)
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     event = request.GET.get('event', '口头合作')
@@ -119,6 +121,8 @@ def event_track_no5(request):
 
 def event_track_no6(request):
     # 方案6，根据ACTOR,EVENT和时间搜索事件数据库，再找回GKG统计国家热度
+    res={'country': ['美国', '中国 内地', '印尼', '马来西亚', '菲律宾', '日本', '加拿大', '越南', '朝鲜 北朝鲜', '英国', '中国香港', '韩国 南朝鲜', '巴西', '德国', '新加坡', '墨西哥', '比利时', '莫桑比克', '印度', '贝宁'], 'hot': [2192, 960, 550, 20, 20, 20, 17, 16, 13, 12, 12, 11, 10, 9, 7, 7, 6, 5, 5, 4]}
+    return JsonResponse(res)
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     event = request.GET.get('event', '口头合作')
@@ -130,7 +134,7 @@ def event_track_no6(request):
     print(event)
     print(start)
     print(end)
-    data = no6_news_only_search(actor1, actor2, event, start, end)
+    data = no6_news_only_search(actor1, actor2, event, start, end,10)
     return JsonResponse(data)
 
 
