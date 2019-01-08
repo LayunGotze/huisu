@@ -70,7 +70,7 @@
         console.log(enddate);
         $.get('/api/event6/',{'actor1':actor1_list,'actor2':actor2_list,'event':event,'start':startdate,'end':enddate},function (data) {
             console.log(data);
-            draw_rank_chart(data, 'container', '热门人物图', 'country', 'hot');
+            draw_rank_chart(data, 'container', '热门国家图', 'country', 'hot');
         });
     }
 

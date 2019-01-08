@@ -2,6 +2,7 @@ import time
 import re
 from api.backtrack_use.mongodb_link import origin,events_tracking
 from api.backtrack_use.event_basic_use import *
+import json
 #from progressbar import *
 """
 事件回溯9个方案所需要的接口函数
@@ -513,19 +514,19 @@ def no9_news_only_search(actor1, actor2, start, end,top,num=0):
 
 #data=no3_news_only_search(actor1,actor2,"20180506","20180515",num=2000,top=11)
 
-# actor1 = ['Xi Jinping', 'Donald Trump','','USA']
-# actor2 = ['Trump', 'Trump','China','']
-# event=[3,4]
+actor1 = ['Xi Jinping', 'China','Xi','China','Jinping Xi','China','']
+actor2 = ['Trump', 'USA','Trump','United States','Donald Trump','','USA']
+event=[1,2,3,4]
 
-#data=no4_news_only_search(actor1,actor2,event,"20180401","20180420")
+#data=no4_news_only_search(actor1,actor2,event,"20180401","20180430")
 #print(data)
 
-#data=no5_news_only_search(actor1,actor2,event,"20180401","20180420")
+#data=no5_news_only_search(actor1,actor2,event,"20180401","20180430")
 
 
-#data=no6_news_only_search(actor1,actor2,event,"20180401","20180420",20)
-actor1=['Miller','Donald Trump']
-actor2=['Trump','Trump']
+#data=no6_news_only_search(actor1,actor2,event,"20180401","20180430",10)
+# actor1=['Miller','Donald Trump']
+# actor2=['Trump','Trump']
 #data=no7_news_only_search(actor1,actor2,"20180330","20180515",16,2000)
 
 #data=no8_news_only_search(actor1,actor2,"20180330","20180515",2000)
@@ -534,3 +535,7 @@ actor2=['Trump','Trump']
 #{'o_gt': {'$gte': 1522368000, '$lte': 1526342400}}
 #{'o_gt': {'$gte': 1522339200, '$lte': 1526313600}}
 #create_time_dict("20180501","20180515")
+dict={}
+#with open('data.txt','r') as f:
+with open('api/backtrack_use/data.txt','r') as f:
+    dict=json.loads(f.read())
