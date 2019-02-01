@@ -61,7 +61,11 @@ event_code_map={'官方声明':'01','呼吁':'02','表达合作意向':'03','商
                 '询问': '10','反对':'11','拒绝':'12','威胁':'13','抗议':'14',
                 '展现武力': '15','减少联系':'16','逼迫':'17','攻击':'18','战斗':'19'}
 
-
+#event_code_map的反向映射
+event_code_map_reverse={1: '官方声明', 2: '呼吁', 3: '表达合作意向', 4: '商议',
+                5: '从事外交合作', 6: '开展物质合作', 7: '提供援助', 8: '不再反对', 9: '调查',
+                10: '询问', 11: '反对', 12: '拒绝', 13: '威胁', 14: '抗议', 15: '展现武力',
+                16: '减少联系', 17: '逼迫', 18: '攻击', 19: '战斗',20:'null'}
 
 def timestr2stamp10(time_str):
     #将'20180501'的字符串转换为10位时间戳
@@ -102,6 +106,10 @@ def gkg_person_list(data):
         return list
     list=data.split(';')
     return list
+
+def gkg_counts_total(text):
+    #获取gkg的counts字段中的事件个数:
+    return len(text.split(';'))
 
 def gkg_country_extract(text):
     #提取GKG中的国家名称

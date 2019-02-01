@@ -161,6 +161,55 @@ def no3_news_only_search(actor1,actor2,start,end,num=0,top=10):
     print(ret_data)
     return ret_data
 
+def no3_news_hot_search(actor1,actor2,start,end,num=0):
+    #方案三的热度图版本，先查询英文新闻，再联立GKG数据库，返回事件热度图
+    #输入与no1相同
+    #返回的是前10位的排名数据，KEY和VALUE分开
+    ret_data = create_time_dict(start, end)
+
+    dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
+
+    print(dict)
+    cnt=0
+    total=len(actor1)
+
+    if num==0:
+        res=origin.find(dict)
+    else:
+        res = origin.find(dict).limit(num)
+    while True:
+        try:
+            item=res.next()
+            try:
+                if 's_cont' in item and 'o_gt' in item:
+                    # 查看原文，统计出现次数
+                    cnt=0
+                    while cnt<total:
+                        res1 = re.search(actor1[cnt], item['s_cont'])
+                        res2 = re.search(actor2[cnt], item['s_cont'])
+                        if res1 is not None and res2 is not None:
+                            #若包含两个人名，统计GKG数据库中的事件个数
+                            time_tmp=time.strftime("%Y%m%d",time.localtime(item['o_gt']))
+                            if time_tmp in ret_data:
+                                #若gkg counts为空
+                                if item['gkg']['counts']=='':
+                                    ret_data[time_tmp]+=1
+                                else:
+                                    ret_data[time_tmp]+=gkg_counts_total(item['gkg']['counts'])
+                            break
+                        cnt+=1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+    #print(ret_data)
+    ret_data=data2html(ret_data)
+    #print(ret_data)
+    return ret_data
+
 def no4_news_only_search(actor1,actor2,event,start,end):
     #方案四，先查询事件数据库，返回不同事件类型的热度图
     #输入多了一个事件，返回的数据已经转化为前端接受的格式了
@@ -193,6 +242,40 @@ def no4_news_only_search(actor1,actor2,event,start,end):
             ret[code_map[i]] = data2html(ret_data[i])
         else:
             ret[code_map[i]]={'hot':[]}
+    print(ret)
+    return ret
+
+def no4_news_hot_search(actor1,actor2,event,start,end):
+    #热度版方案4，返回时间轴热度图
+    #event为list，对应查询数据库的eventrootcode字段
+    # actor1 = ["China", "China", "Japan", "", "USA"]
+    # actor2 = ["USA", "Trump", "USA", "China", ""]
+    # event = [1, 2, 3, 14, 19]
+    ret_data = {}
+    total_length=len(actor1)
+    for event_code in event:
+        #循环搜索eventrootcode
+        ret_data[event_code]={}
+        cnt=0
+        while cnt<total_length:
+            #对于每一对actor做一次查询，统计出现的次数
+            dict={'actor1name':actor1[cnt],'actor2name':actor2[cnt],'eventrootcode':event_code,'sqldate':{'$gte':start,'$lte':end}}
+            print(dict)
+            res=events_tracking.find(dict)
+            for item in res:
+                if 'sqldate' in item:
+                    if item['sqldate'] in ret_data[event_code]:
+                        ret_data[event_code][item['sqldate']]+=1
+                    else:
+                        ret_data[event_code][item['sqldate']]=1
+            cnt+=1
+     #按照eventrootcode依此进行类型转换，以适应前端输入格式
+    ret={}
+    for i in range(1,21):
+        if i in ret_data:
+            ret[event_code_map_reverse[i]]=data2html(ret_data[i])
+        else:
+            ret[event_code_map_reverse[i]]={'hot':[]}
     print(ret)
     return ret
 
@@ -251,6 +334,60 @@ def no5_news_only_search(actor1,actor2,event,start,end):
     print(ret_data)
     return ret_data
 
+def no5_news_hot_search(actor1,actor2,event,start,end):
+    #方案五的热度图实现，先查询事件数据库，再找回新闻本身，统计热度图
+    #event是基于eventrootcode查询
+    #输出需要data2html的过滤
+    # actor1 = ["", "USA"]
+    # actor2 = ["China", ""]
+    # event = [1, 2]
+    sent_set=set()
+    for event_code in event:
+        # 循环搜索eventrootcode
+        cnt = 0
+        total_length = len(actor1)
+        while cnt < total_length:
+            # 对于每一对actor做一次查询，统计出现的次数
+            dict = {'actor1name': actor1[cnt], 'actor2name': actor2[cnt], 'eventrootcode': event_code,
+                    'sqldate': {'$gte': start, '$lte': end}}
+            print(dict)
+            res = events_tracking.find(dict)
+            for item in res:
+                #获取sentid,存入SET中，便于统计新闻数据
+                sent_set.add(senid2index(item['sentid'])[0])
+            cnt += 1
+    sent_list=list(sent_set)
+    #print(sent_list)
+
+    #构造返回数据的字典，时间值
+    ret_data = create_time_dict(start, end)
+    #print(ret_data)
+
+    # 获取原新闻数据
+    res = origin.find({'story_id': {"$in": sent_list}})
+    #print(res)
+
+    while True:
+        try:
+            item=res.next()
+            try:
+                if 'o_gt' in item:
+                    # 查看原文时间
+                    time_tmp = time.strftime("%Y%m%d", time.localtime(item['o_gt']))
+                    if time_tmp in ret_data:
+                        # 若时间在搜索范围内
+                        ret_data[time_tmp] += 1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+
+    ret_data = data2html(ret_data)
+    print(ret_data)
+    return ret_data
 
 def no6_news_only_search(actor1,actor2,event,start,end,top):
     #方案六，先查询事件数据库，再找GKG，统计国家事件数的统计
@@ -317,6 +454,61 @@ def no6_news_only_search(actor1,actor2,event,start,end,top):
     ret_data = rankdata(ret_data, 'country', 'hot')
 
 
+    print(ret_data)
+    return ret_data
+
+def no6_news_hot_search(actor1,actor2,event,start,end):
+    #方案六的热度，先查询事件数据库，再找GKG中counts的时间数目，返回时间轴热度图
+    #event基于eventrootcode
+    # actor1 = ["", "USA"]
+    # actor2 = ["China", ""]
+    # event = [1, 2]
+    sent_set=set()
+    for event_code in event:
+        # 循环搜索eventrootcode
+        cnt = 0
+        total_length = len(actor1)
+        while cnt < total_length:
+            # 对于每一对actor做一次查询，统计出现的次数
+            dict = {'actor1name': actor1[cnt], 'actor2name': actor2[cnt], 'eventrootcode': event_code,
+                    'sqldate': {'$gte': start, '$lte': end}}
+            print(dict)
+            res = events_tracking.find(dict)
+            for item in res:
+                #获取sentid,存入SET中，便于统计新闻数据
+                sent_set.add(senid2index(item['sentid'])[0])
+            cnt += 1
+    sent_list=list(sent_set)
+    #print(sent_list)
+
+    ret_data = create_time_dict(start, end)
+
+    # 获取原新闻数据
+    res = origin.find({'story_id': {"$in": sent_list}})
+    #print(res)
+
+    while True:
+        try:
+            item=res.next()
+            try:
+                if 'gkg' in item and 'counts' in item['gkg']:
+                    # 查看gkg.counts，统计事件个数
+                    time_tmp=time.strftime("%Y%m%d",time.localtime(item['o_gt']))
+                    if time_tmp in ret_data:
+                        #若gkg counts为空
+                            if item['gkg']['counts']=='':
+                                ret_data[time_tmp]+=1
+                            else:
+                                ret_data[time_tmp]+=gkg_counts_total(item['gkg']['counts'])
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+
+    ret_data=data2html(ret_data)
     print(ret_data)
     return ret_data
 
@@ -539,3 +731,34 @@ dict={}
 #with open('data.txt','r') as f:
 with open('api/backtrack_use/data.txt','r') as f:
     dict=json.loads(f.read())
+
+actor1 = ["China", "China", "Japan", "", "USA"]
+actor2 = ["USA", "Trump", "USA", "China", ""]
+event = [1, 2, 3, 14, 19]
+#no4_news_hot_search(actor1,actor2,event,"20180401","20180430")
+#方案4执行结果格式
+"""
+ret4={'官方声明': {'hot': [[1522512000000, 2], [1522598400000, 34], [1522684800000, 38], [1522771200000, 51], [1522857600000, 21], [1522944000000, 12], [1523289600000, 1], [1523980800000, 1], [1524067200000, 14], [1524153600000, 13], [1524240000000, 5], [1524326400000, 4], [1524412800000, 15], [1524499200000, 14], [1524585600000, 38], [1524672000000, 6], [1524758400000, 10], [1524844800000, 9], [1524931200000, 12], [1525017600000, 7]], 'max_value': 51, 'min_value': 0},
+      '呼吁': {'hot': [[1522598400000, 1], [1522684800000, 3], [1522771200000, 10], [1522857600000, 5], [1522944000000, 12], [1524067200000, 3], [1524153600000, 1], [1524412800000, 1], [1524585600000, 1], [1524672000000, 1], [1524758400000, 2], [1524844800000, 1], [1525017600000, 3]], 'max_value': 12, 'min_value': 0}, 
+      '表达合作意向': {'hot': [[1522512000000, 5], [1522598400000, 27], [1522684800000, 30], [1522771200000, 23], [1522857600000, 20], [1522944000000, 25], [1523980800000, 2], [1524067200000, 4], [1524153600000, 18], [1524240000000, 26], [1524326400000, 9], [1524412800000, 12], [1524499200000, 16], [1524585600000, 24], [1524672000000, 34], [1524758400000, 31], [1524844800000, 5], [1524931200000, 27], [1525017600000, 12]], 'max_value': 34, 'min_value': 0}, 
+      '商议': {'hot': []}, '从事外交合作': {'hot': []}, '开展物质合作': {'hot': []}, '提供援助': {'hot': []}, '不再反对': {'hot': []}, '调查': {'hot': []}, '询问': {'hot': []}, '反对': {'hot': []}, '拒绝': {'hot': []}, '威胁': {'hot': []}, 
+      '抗议': {'hot': [[1522684800000, 3], [1522771200000, 1], [1523980800000, 1], [1524672000000, 1]], 'max_value': 3, 'min_value': 0}, 
+      '展现武力': {'hot': []}, '减少联系': {'hot': []}, '逼迫': {'hot': []}, '攻击': {'hot': []}, 
+      '战斗': {'hot': [[1522512000000, 2], [1522598400000, 1], [1522684800000, 7], [1522771200000, 5], [1522857600000, 6], [1522944000000, 1], [1523462400000, 1], [1524067200000, 51], [1524153600000, 65], [1524240000000, 42], [1524326400000, 53], [1524412800000, 111], [1524499200000, 95], [1524585600000, 64], [1524672000000, 62], [1524758400000, 35], [1524844800000, 17], [1524931200000, 3], [1525017600000, 6]], 'max_value': 111, 'min_value': 0}, 'null': {'hot': []}}
+"""
+#no5_news_hot_search(actor1,actor2,event,"20180401","20180430")
+#方案5执行结果格式
+"""
+ret5={'hot': [[1522512000000, 6], [1522598400000, 38], [1522684800000, 73], [1522771200000, 86], [1522857600000, 53], [1522944000000, 65], [1523030400000, 0], [1523116800000, 0], [1523203200000, 0], 
+[1523289600000, 0], [1523376000000, 0], [1523462400000, 0], [1523548800000, 0], [1523635200000, 0], [1523721600000, 0], [1523808000000, 0], [1523894400000, 0], [1523980800000, 0], [1524067200000, 6], 
+[1524153600000, 53], [1524240000000, 29], [1524326400000, 35], [1524412800000, 36], [1524499200000, 57], [1524585600000, 58], [1524672000000, 53], [1524758400000, 37], [1524844800000, 25], 
+[1524931200000, 23], [1525017600000, 23]], 'max_value': 86, 'min_value': 0}
+"""
+#no6_news_hot_search(actor1,actor2,event,"20180401","20180430")
+#方案6行结果格式
+"""
+ret6={'hot': [[1522512000000, 6], [1522598400000, 38], [1522684800000, 73], [1522771200000, 86], [1522857600000, 53], [1522944000000, 65], [1523030400000, 0], [1523116800000, 0], [1523203200000, 0], 
+[1523289600000, 0], [1523376000000, 0], [1523462400000, 0], [1523548800000, 0], [1523635200000, 0], [1523721600000, 0], [1523808000000, 0], [1523894400000, 0], [1523980800000, 0], [1524067200000, 6], 
+[1524153600000, 53], [1524240000000, 29], [1524326400000, 35], [1524412800000, 36], [1524499200000, 57], [1524585600000, 58], [1524672000000, 53], [1524758400000, 37], [1524844800000, 25], 
+[1524931200000, 23], [1525017600000, 23]], 'max_value': 86, 'min_value': 0}
+"""
