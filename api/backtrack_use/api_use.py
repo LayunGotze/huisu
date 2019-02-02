@@ -574,6 +574,57 @@ def no7_news_only_search(actor1,actor2,start,end,top,num=0):
     print(ret_data)
     return ret_data
 
+def no7_news_hot_search(actor1,actor2,start,end,num=0):
+    #方案七热度图实现，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，返回事件热度图
+
+    # actor1 = ['Miller', 'Donald Trump']
+    # actor2 = ['Trump', 'Trump']
+    # data = no7_news_only_search(actor1, actor2, "20180330", "20180515")
+    ret_data = create_time_dict(start, end)
+
+    dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
+
+    print(dict)
+    cnt=0
+    total=len(actor1)
+    if num==0:
+        res = origin.find(dict)
+    else:
+        res=origin.find(dict).limit(num)
+    while True:
+        try:
+            item=res.next()
+            try:
+                if 'gkg' in item and 'persons' in item['gkg']:
+                    #查看item['gkg']['persons'] 查看是否包含提供人名
+                    if item['gkg']['persons']!="":
+                        name_set=set(gkg_person_list(item['gkg']['persons'])) #转换为SET方便判断
+                        #print(name_set)
+                        cnt=0
+                        while cnt<total:
+                            if actor1[cnt] in name_set and actor2[cnt] in name_set:
+                                #GKG中包含两个人名，统计gkg counts的热度
+                                time_tmp=time.strftime("%Y%m%d",time.localtime(item['o_gt']))
+                                if time_tmp in ret_data:
+                                    #若gkg counts为空
+                                    if item['gkg']['counts']=="":
+                                        ret_data[time_tmp]+=1
+                                    else:
+                                        ret_data[time_tmp]+=gkg_counts_total(item['gkg']['counts'])
+                                break
+                            cnt+=1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+
+    ret_data=data2html(ret_data)
+    print(ret_data)
+    return ret_data
+
 def no8_news_only_search(actor1, actor2, start, end,num=0):
     # 方案八，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，之后查找英文新闻，统计热度
 
@@ -697,6 +748,56 @@ def no9_news_only_search(actor1, actor2, start, end,top,num=0):
     print(ret_data)
     return ret_data
 
+def no9_news_hot_search(actor1, actor2, start, end,num=0):
+    # 方案九热度图实现，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，之后查找事件数据，统计人物时间热度图
+
+    # actor1 = ['Miller', 'Donald Trump']
+    # actor2 = ['Trump', 'Trump']
+    # data = no9_news_only_search(actor1, actor2, "20180330", "20180515")
+
+    ret_data=create_time_dict(start,end)
+
+    dict = {"o_gt": {"$gte": timestr2stamp10(start), "$lte": timestr2stamp10(end)}}
+
+    print(dict)
+    cnt = 0
+    total = len(actor1)
+    if num==0:
+        res = origin.find(dict)
+    else:
+        res=origin.find(dict).limit(num)
+    while True:
+        try:
+            item = res.next()
+            try:
+                if 'gkg' in item and 'persons' in item['gkg']:
+                    # 查看item['gkg']['persons'] 查看是否包含提供人名
+                    if item['gkg']['persons'] != "":
+                        name_set = set(gkg_person_list(item['gkg']['persons']))  # 转换为SET方便判断
+                        # print(name_set)
+                        cnt = 0
+                        while cnt < total:
+                            if actor1[cnt] in name_set and actor2[cnt] in name_set:
+                                # GKG中包含两个人名，查看事件数据，统计事件热度
+                                event_cnt=0
+                                while str(event_cnt) in item['events']:
+                                    event_cnt+=1
+                                time_tmp = time.strftime("%Y%m%d", time.localtime(item['o_gt']))
+                                if time_tmp in ret_data:
+                                    ret_data[time_tmp] += event_cnt
+                                break
+                            cnt += 1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+    ret_data=data2html(ret_data)
+    print(ret_data)
+    return ret_data
+
 # actor1 = ['Xi Jinping', 'China']
 # actor2 = ['Trump', 'USA']
 
@@ -761,4 +862,28 @@ ret6={'hot': [[1522512000000, 6], [1522598400000, 38], [1522684800000, 73], [152
 [1523289600000, 0], [1523376000000, 0], [1523462400000, 0], [1523548800000, 0], [1523635200000, 0], [1523721600000, 0], [1523808000000, 0], [1523894400000, 0], [1523980800000, 0], [1524067200000, 6], 
 [1524153600000, 53], [1524240000000, 29], [1524326400000, 35], [1524412800000, 36], [1524499200000, 57], [1524585600000, 58], [1524672000000, 53], [1524758400000, 37], [1524844800000, 25], 
 [1524931200000, 23], [1525017600000, 23]], 'max_value': 86, 'min_value': 0}
+"""
+
+
+actor1 = ['Miller', 'Donald Trump']
+actor2 = ['Trump', 'Trump']
+#data = no7_news_hot_search(actor1, actor2, "20180330", "20180515",2000)
+"""
+ret7={'hot': [[1522339200000, 55], [1522425600000, 0], [1522512000000, 0], [1522598400000, 0], [1522684800000, 0], [1522771200000, 0], [1522857600000, 0], 
+[1522944000000, 0], [1523030400000, 0], [1523116800000, 0], [1523203200000, 0], [1523289600000, 0], [1523376000000, 0], [1523462400000, 0], [1523548800000, 0], 
+[1523635200000, 0], [1523721600000, 0], [1523808000000, 0], [1523894400000, 0], [1523980800000, 0], [1524067200000, 0], [1524153600000, 0], [1524240000000, 0],
+ [1524326400000, 0], [1524412800000, 0], [1524499200000, 0], [1524585600000, 0], [1524672000000, 0], [1524758400000, 0], [1524844800000, 0], [1524931200000, 0], 
+ [1525017600000, 0], [1525104000000, 0], [1525190400000, 0], [1525276800000, 0], [1525363200000, 0], [1525449600000, 0], [1525536000000, 0], [1525622400000, 0],
+  [1525708800000, 0], [1525795200000, 0], [1525881600000, 0], [1525968000000, 0], [1526054400000, 0], [1526140800000, 0], [1526227200000, 0], [1526313600000, 0]],
+  'max_value': 55, 'min_value': 0}
+"""
+#data=no8_news_only_search(actor1,actor2,"20180330","20180410",2000)
+"""
+ret8={'hot': [[1522339200000, 55], [1522425600000, 0], [1522512000000, 0], [1522598400000, 0], [1522684800000, 0], [1522771200000, 0], [1522857600000, 0], 
+[1522944000000, 0], [1523030400000, 0], [1523116800000, 0], [1523203200000, 0], [1523289600000, 0]], 'max_value': 55, 'min_value': 0}
+"""
+#data=no9_news_hot_search(actor1,actor2,"20180330","20180410",2000)
+"""
+ret9={'hot': [[1522339200000, 197], [1522425600000, 0], [1522512000000, 0], [1522598400000, 0], [1522684800000, 0], [1522771200000, 0], [1522857600000, 0], 
+[1522944000000, 0], [1523030400000, 0], [1523116800000, 0], [1523203200000, 0], [1523289600000, 0]], 'max_value': 197, 'min_value': 0}
 """
