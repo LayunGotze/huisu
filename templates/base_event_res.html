@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block css %}
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/event_result.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'js/amcharts/export/export.css' %}"/>
+
+{% endblock %}
+{% block content %}
+    {% block back-info %}
+        <!---背景图与介绍--->
+    <div id="alalysis">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <h2 class=""> {{ analysis_info_chinese_name }}</h2>
+                    <br>
+                    {% with 'Visualization/img/'|add:event_view|add:'.png' as img %}
+                    <img src="{% static img %}" class="img-thumbnail"
+                         alt="...">
+                    {% endwith %}
+                    <br>
+                    <br>
+
+                    <p><b>数据：</b>{{ analysis_info_chinese_database }}</p>
+
+                    <p><b>描述：</b>{{ analysis_info_discribe }}</p>
+
+                    <p><b>输入：</b>{{ analysis_info_input }}</p>
+
+                    <p><b>介绍：</b>{{ analysis_info_detail }}</p>
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+    </div>
+    <!---end 背景图与介绍--->
+    {% endblock %}
+
+{% endblock %}
+{% block js %}
+    {{ block.super }}
+    <script src="{% static 'js/amcharts/amcharts.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/amcharts/themes/light.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/amchart_util.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/amcharts/ammap.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/ammap_util.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/amcharts/export/export.js' %}" type="text/javascript"></script>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#event_page').addClass('active');
+    });
+    </script>
+{% endblock %}

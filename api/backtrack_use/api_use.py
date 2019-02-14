@@ -251,11 +251,19 @@ def no4_news_hot_search(actor1,actor2,event,start,end):
     # actor1 = ["China", "China", "Japan", "", "USA"]
     # actor2 = ["USA", "Trump", "USA", "China", ""]
     # event = [1, 2, 3, 14, 19]
-    ret_data = {}
+    ret_data={}
+    time_dict=create_time_dict(start,end)
+    data = {'time':[],'legend':[],'data':[]}
+    tmp_dict={'name':'','type':'line','smooth':'true','data':[]}
     total_length=len(actor1)
+    total_event=0
     for event_code in event:
         #循环搜索eventrootcode
-        ret_data[event_code]={}
+
+        data['legend'].append(event_code_map_reverse[event_code])
+        tmp_dict={'name':'','type':'line','smooth':'true','data':[]}
+        tmp_dict['name']=event_code_map_reverse[event_code]
+        tmp_dict['data']=create_time_dict(start,end)
         cnt=0
         while cnt<total_length:
             #对于每一对actor做一次查询，统计出现的次数
@@ -264,20 +272,39 @@ def no4_news_hot_search(actor1,actor2,event,start,end):
             res=events_tracking.find(dict)
             for item in res:
                 if 'sqldate' in item:
-                    if item['sqldate'] in ret_data[event_code]:
-                        ret_data[event_code][item['sqldate']]+=1
-                    else:
-                        ret_data[event_code][item['sqldate']]=1
+                    tmp_dict['data'][item['sqldate']]+=1
             cnt+=1
-     #按照eventrootcode依此进行类型转换，以适应前端输入格式
-    ret={}
-    for i in range(1,21):
-        if i in ret_data:
-            ret[event_code_map_reverse[i]]=data2html(ret_data[i])
-        else:
-            ret[event_code_map_reverse[i]]={'hot':[]}
-    print(ret)
-    return ret
+        print(tmp_dict)
+        data['data'].append(tmp_dict)
+        total_event+=1
+    #按照eventrootcode依此进行类型转换，以适应前端输入格式
+    start_int = timestr2stamp10(start)
+    end_int = timestr2stamp10(end)
+    begin = start_int + 86400
+    while begin <= end_int:
+        # 生成从START到END的日期，ret_data为返回数据
+        time_tmp = time.strftime("%Y%m%d", time.localtime(begin))
+        begin = begin + 86400
+        data['time'].append(time_tmp)
+    cnt=0
+    for item in data['data']:
+        #print(item['data'])
+        tmp_list=[]
+        for key in item['data']:
+            tmp_list.append(item['data'][key])
+        data['data'][cnt]['data']=tmp_list
+        cnt+=1
+    print(data)
+    return data
+# actor1 = [ "", "USA"]
+# actor2 = [ "China", ""]
+# event = [1, 2, 3]
+# no4_news_hot_search(actor1,actor2,event,"20180401","20180410")
+# {'time': ['20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'],
+# 'legend': ['官方声明', '呼吁', '表达合作意向'], 'data': [
+# {'name': '官方声明', 'type': 'line', 'smooth': 'true', 'data': [2, 34, 38, 51, 21, 12, 0, 0, 0, 1]},
+# {'name': '呼吁', 'type': 'line', 'smooth': 'true', 'data': [0, 1, 3, 10, 5, 12, 0, 0, 0, 0]},
+# {'name': '表达合作意向', 'type': 'line', 'smooth': 'true', 'data': [5, 27, 30, 23, 20, 25, 0, 0, 0, 0]}]}
 
 def no5_news_only_search(actor1,actor2,event,start,end):
     #方案五，先查询事件数据库，再找回新闻本身，统计热度图
