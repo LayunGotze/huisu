@@ -15,8 +15,8 @@
     <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
     {% load staticfiles %}
     <script src="{% static 'js/hot_chart.js' %}"></script>
-    <script src="{% static 'js/info_base.js' %}"></script>
-    <script src="{% static 'js/rank_chart.js' %}"></script>
+    <script src="{% static 'js/hot_chart2.js' %}"></script>
+    <script type="text/javascript" src="{%static "js/echarts.js" %}"></script>
 </head>
 
 <body>
@@ -39,7 +39,16 @@
     <input type="button" onclick="click3()" value="Submit" />
     <button onclick="click2()"><span>添加</span></button>
     </div>
-    <div id="container" style="min-width:400px;height:400px"></div>
+    <div class="col-md-10">
+                <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
+                <div class="col-md-12">
+                    <h1>根类数据时间线</h1>
+                    <p>根类数据时间线以时间为单位，展示与时间对应的的根类数据，包括(口头合作)Verbal Cooperation，(物质合作)Material Cooperation，(口头冲突)Verbal Conflict，(物质冲突)Material Conflict 4种数据，形成时间-根类数据变化曲线图。</p>
+                </div>
+                <div class="col-md-12">
+                    <div id="quadclass_graph" style="width: 100%;height: 600px"></div>
+                </div>
+            </div>
 </body>
 
 </html>
@@ -70,10 +79,12 @@
         console.log(enddate);
         $.get('/api/event5/',{'actor1':actor1_list,'actor2':actor2_list,'event':event,'start':startdate,'end':enddate},function (data) {
             console.log(data);
-            draw_hot_chart(data, 'container','事件热度曲线');
+            draw_hot_charts('quadclass_graph','数据时间线',data)
+            //draw_hot_chart(data, 'container','事件热度曲线');
         })
     }
-
+    data={'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410', '20180411', '20180412', '20180413', '20180414', '20180415', '20180416', '20180417', '20180418', '20180419', '20180420', '20180421', '20180422', '20180423', '20180424', '20180425', '20180426', '20180427', '20180428', '20180429', '20180430'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [6, 38, 73, 86, 53, 65, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 53, 29, 35, 36, 57, 58, 53, 37, 25, 23, 23]}]}
+    draw_hot_charts('quadclass_graph','数据时间线',data)
     var data2={
         'hot_max':1,
         'hot_min':0,
