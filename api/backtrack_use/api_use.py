@@ -57,6 +57,7 @@ def no1_news_only_search(actor1,actor2,start,end,num=0):
     ret_data=data2html(ret_data)
 
     #pbar.finish()
+    ret_data=one_hot2target(ret_data)
     print(ret_data)
     return ret_data
 
@@ -104,6 +105,7 @@ def no2_news_only_search(actor1,actor2,start,end,num=0):
             print(e)
 
     ret_data = data2html(ret_data)
+    ret_data=one_hot2target(ret_data)
     print(ret_data)
     return ret_data
 
@@ -205,9 +207,10 @@ def no3_news_hot_search(actor1,actor2,start,end,num=0):
             break
         except Exception as e:
             print(e)
-    #print(ret_data)
+
     ret_data=data2html(ret_data)
-    #print(ret_data)
+    ret_data=one_hot2target(ret_data)
+    print(ret_data)
     return ret_data
 
 def no4_news_only_search(actor1,actor2,event,start,end):
@@ -413,6 +416,7 @@ def no5_news_hot_search(actor1,actor2,event,start,end):
             print(e)
 
     ret_data = data2html(ret_data)
+    ret_data=one_hot2target(ret_data)
     print(ret_data)
     return ret_data
 
@@ -536,6 +540,7 @@ def no6_news_hot_search(actor1,actor2,event,start,end):
             print(e)
 
     ret_data=data2html(ret_data)
+    ret_data=one_hot2target(ret_data)
     print(ret_data)
     return ret_data
 
@@ -649,6 +654,7 @@ def no7_news_hot_search(actor1,actor2,start,end,num=0):
             print(e)
 
     ret_data=data2html(ret_data)
+    ret_data=one_hot2target(ret_data)
     print(ret_data)
     return ret_data
 
@@ -706,6 +712,7 @@ def no8_news_only_search(actor1, actor2, start, end,num=0):
 
     #最后要经过data2html过滤，方便前端时间图的展示
     ret_data=data2html(ret_data)
+    ret_data=one_hot2target(ret_data)
     print(ret_data)
     return ret_data
 
@@ -822,6 +829,7 @@ def no9_news_hot_search(actor1, actor2, start, end,num=0):
         except Exception as e:
             print(e)
     ret_data=data2html(ret_data)
+    ret_data=one_hot2target(ret_data)
     print(ret_data)
     return ret_data
 
