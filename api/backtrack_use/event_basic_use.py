@@ -62,10 +62,16 @@ event_code_map={'官方声明':'01','呼吁':'02','表达合作意向':'03','商
                 '展现武力': '15','减少联系':'16','逼迫':'17','攻击':'18','战斗':'19'}
 
 #event_code_map的反向映射
-event_code_map_reverse={1: '官方声明', 2: '呼吁', 3: '表达合作意向', 4: '商议',
-                5: '从事外交合作', 6: '开展物质合作', 7: '提供援助', 8: '不再反对', 9: '调查',
-                10: '询问', 11: '反对', 12: '拒绝', 13: '威胁', 14: '抗议', 15: '展现武力',
-                16: '减少联系', 17: '逼迫', 18: '攻击', 19: '战斗',20:'null'}
+event_code_map_reverse={1: '官方声明', 2: '上诉', 3: '表达合作意向', 4: '咨询',
+                5: '从事外交合作', 6: '开展物质合作', 7: '提供援助', 8: '投降', 9: '研究',
+                10: '需求', 11: '反对', 12: '拒绝', 13: '威胁', 14: '抗议', 15: '展示力量部署',
+                16: '减少联系', 17: '强迫', 18: '突击', 19: '战斗',20:'非常规大规模暴力'}
+#event_code_map的反向映射英文版
+event_code_map_english= {1:'MAKE PUBLIC STATEMENT',2:'APPEAL',3:'EXPRESS INTENT TO COOPERATE',
+4:'CONSULT',5:'ENGAGE IN DIPLOMATIC COOPERATION',6:'ENGAGE IN MATERIAL COOPERATION',
+7:'PROVIDE AID',8:'YIELD',9:'INVESTIGATE',10:'DEMAND',11:'DISAPPROVE',
+12:'REJECT',13:'THREATEN',14:'PROTEST',15:'EXHIBIT FORCE POSTURE',16:'REDUCE RELATIONS',
+17:'COERCE',18:'ASSAULT',19:'FIGHT',20:'USE UNCONVENTIONAL MASS VIOLENCE'}
 
 def timestr2stamp10(time_str):
     #将'20180501'的字符串转换为10位时间戳

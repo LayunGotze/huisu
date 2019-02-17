@@ -13,7 +13,7 @@
     <script src="https://img.hcharts.cn/highcharts/modules/exporting.js"></script>
     <script src="https://img.hcharts.cn/highcharts/modules/oldie.js"></script>
     <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
-        {% load staticfiles %}
+    {% load staticfiles %}
     <script src="{% static 'js/hot_chart.js' %}"></script>
     <script src="{% static 'js/hot_chart2.js' %}"></script>
     <script type="text/javascript" src="{%static "js/echarts.js" %}"></script>
@@ -21,150 +21,189 @@
 
 <body>
     <div id="test">
-    <span>施事者姓名:</span><input type="text" name="actor1_1" id="actor1_1" />
-    <span>受事者姓名:</span><input type="text" name="actor1_2" id="actor1_2" />
-    <span>事件:</span>
+        <span>施事者姓名:</span><input type="text" name="actor1_1" id="actor1_1" />
+        <span>受事者姓名:</span><input type="text" name="actor1_2" id="actor1_2" />
+        <span>事件:</span>
         <span>事件</span>
-<select id="code" >
-    <option value ="口头合作">口头合作</option>
-    <option value ="实际合作">实际合作</option>
-    <option value ="合作">合作</option>
-    <option value ="口头冲突">口头冲突</option>
-    <option value ="实际冲突">实际冲突</option>
-    <option value ="冲突">冲突</option>
-    <option value ="全部">全部</option>
-</select>
-    <span>开始时间</span><input type="date" name="start" id="start" />
-    <span>截止时间</span><input type="date" name="end" id="end" />
-    <input type="button" onclick="click3()" value="Submit" />
-    <button onclick="click2()"><span>添加</span></button>
+        <select id="code">
+            <option value="口头合作">口头合作</option>
+            <option value="实际合作">实际合作</option>
+            <option value="合作">合作</option>
+            <option value="口头冲突">口头冲突</option>
+            <option value="实际冲突">实际冲突</option>
+            <option value="冲突">冲突</option>
+            <option value="全部">全部</option>
+        </select>
+        <span>开始时间</span><input type="date" name="start" id="start" />
+        <span>截止时间</span><input type="date" name="end" id="end" />
+        <input type="button" onclick="click3()" value="Submit" />
+        <button onclick="click2()"><span>添加</span></button>
     </div>
     <div class="col-md-10">
-                <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
-                <div class="col-md-12">
-                    <h1>根类数据时间线</h1>
-                    <p>根类数据时间线以时间为单位，展示与时间对应的的根类数据，包括(口头合作)Verbal Cooperation，(物质合作)Material Cooperation，(口头冲突)Verbal Conflict，(物质冲突)Material Conflict 4种数据，形成时间-根类数据变化曲线图。</p>
-                </div>
-                <div class="col-md-12">
-                    <div id="quadclass_graph" style="width: 100%;height: 600px"></div>
-                </div>
-            </div>
+        <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
+        <div class="col-md-12">
+            <h1 id="quad1">公开声明时间线</h1>
+        </div>
+        <div class="col-md-12">
+            <div id="quadclass_1" style="width: 100%;height: 600px"></div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
+        <div class="col-md-12">
+            <h1 id="quad2"></h1>
+        </div>
+        <div class="col-md-12">
+            <div id="quadclass_2" style="width: 100%;height: 600px"></div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
+        <div class="col-md-12">
+            <h1 id="quad3"></h1>
+        </div>
+        <div class="col-md-12">
+            <div id="quadclass_3" style="width: 100%;height: 600px"></div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
+        <div class="col-md-12">
+            <h1 id="quad4"></h1>
+        </div>
+        <div class="col-md-12">
+            <div id="quadclass_4" style="width: 100%;height: 600px"></div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
+        <div class="col-md-12">
+            <h1 id="quad5"></h1>
+        </div>
+        <div class="col-md-12">
+            <div id="quadclass_5" style="width: 100%;height: 600px"></div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
+        <div class="col-md-12">
+            <h1>根类数据时间线</h1>
+            <p>根类数据时间线以时间为单位，展示与时间对应的的根类数据，包括(口头合作)Verbal Cooperation，(物质合作)Material Cooperation，(口头冲突)Verbal
+                Conflict，(物质冲突)Material Conflict 4种数据，形成时间-根类数据变化曲线图。</p>
+        </div>
+        <div class="col-md-12">
+            <div id="quadclass_graph" style="width: 100%;height: 600px"></div>
+        </div>
+    </div>
 </body>
 
 </html>
 
 <script>
-    var cnt=1;
-    function click2()
-    {
+    var cnt = 1;
+    function click2() {
         cnt++;
-        $('#test').append('<div><span>施事者姓名1:</span><input type="text" name="actor'+cnt+'_1" id="actor'+cnt+'_1" /><span>受事者姓名2:</span><input type="text" name="actor'+cnt+'_2" id="actor'+cnt+'_2" /></div>');
+        $('#test').append('<div><span>施事者姓名1:</span><input type="text" name="actor' + cnt + '_1" id="actor' + cnt + '_1" /><span>受事者姓名2:</span><input type="text" name="actor' + cnt + '_2" id="actor' + cnt + '_2" /></div>');
     }
     function click3() {
-        var actor1_list=[],actor2_list=[];
-        for(var i=1;i<=cnt;i++)
-        {
-            actor1_list.push($('#actor'+i+'_1').val());
-            actor2_list.push($('#actor'+i+'_2').val());
+        var actor1_list = [], actor2_list = [];
+        for (var i = 1; i <= cnt; i++) {
+            actor1_list.push($('#actor' + i + '_1').val());
+            actor2_list.push($('#actor' + i + '_2').val());
         }
-        event=$('#code option:selected ').val();
-        startdate=$('#start').val();
-        enddate=$('#end').val();
-        startdate=date_split(startdate);
-        enddate=date_split(enddate);
+        event = $('#code option:selected ').val();
+        startdate = $('#start').val();
+        enddate = $('#end').val();
+        startdate = date_split(startdate);
+        enddate = date_split(enddate);
         console.log(actor1_list);
         console.log(actor2_list);
         console.log(event);
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/event4/',{'actor1':actor1_list,'actor2':actor2_list,'event':event,'start':startdate,'end':enddate},function (data) {
+        $.get('/api/event4/', { 'actor1': actor1_list, 'actor2': actor2_list, 'event': event, 'start': startdate, 'end': enddate }, function (data) {
             console.log(data);
-            draw_hot_charts('quadclass_graph','数据时间线',data)
+            draw_hot_charts('quadclass_graph', '数据时间线', data)
             //draw_chart(data);
         })
     }
-    data={'time': ['20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'],
-    'legend': ['官方声明', '呼吁', '表达合作意向'], 'data': [
-    {'name': '官方声明', 'type': 'line', 'smooth': 'true', 'data': [2, 34, 38, 51, 21, 12, 0, 0, 0, 1]},
-    {'name': '呼吁', 'type': 'line', 'smooth': 'true', 'data': [0, 1, 3, 10, 5, 12, 0, 0, 0, 0]},
-    {'name': '表达合作意向', 'type': 'line', 'smooth': 'true', 'data': [5, 27, 30, 23, 20, 25, 0, 0, 0, 0]}]}
-    draw_hot_charts('quadclass_graph','数据时间线',data)
-    function split2list(text)
-    {   //将字符串中的,分隔开，得到list
+    var data_all={1: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [2, 34, 38, 51, 21, 12, 0, 0, 0, 1]}]}, 
+    2: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 1, 3, 10, 5, 12, 0, 0, 0, 0]}]}, 
+    3: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [5, 27, 30, 23, 20, 25, 0, 0, 0, 0]}]}, 
+    4: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [19, 19, 24, 17, 15, 16, 0, 0, 1, 0]}]}, 
+    5: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [1, 3, 2, 8, 7, 3, 0, 0, 0, 0]}]}, 
+    6: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [1, 4, 13, 16, 18, 6, 0, 0, 0, 0]}]}, 
+    7: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 0, 1, 3, 3, 1, 0, 0, 0, 0]}]}, 
+    8: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [4, 2, 7, 5, 1, 0, 0, 0, 0, 0]}]}, 
+    9: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 4, 2, 6, 0, 1, 0, 0, 0, 4]}]}, 
+    10: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 1, 0, 1, 1, 5, 0, 0, 0, 0]}]}, 
+    11: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [2, 3, 9, 5, 9, 3, 0, 1, 0, 0]}]},
+    12: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [1, 1, 4, 4, 0, 0, 0, 0, 0, 0]}]},
+    13: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 0, 2, 0, 3, 3, 0, 0, 0, 0]}]}, 
+    14: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 0, 3, 1, 0, 0, 0, 0, 0, 0]}]}, 
+    15: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 0, 1, 0, 0, 0, 0, 0, 0, 0]}]}, 
+    16: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}]}, 
+    17: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [2, 4, 13, 15, 15, 31, 0, 0, 0, 0]}]}, 
+    18: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 1, 0, 0, 0, 1, 0, 0, 0, 0]}]}, 
+    19: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [2, 1, 7, 5, 6, 1, 0, 0, 0, 0]}]},
+    20: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}]}}
+    var data = {'time': ['20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['口头合作', '实际合作', '口头冲突', '实际冲突'], 'data': [{'name': '口头合作', 'type': 'line', 'smooth': 'true', 'data': [27, 84, 97, 109, 68, 68, 0, 0, 1]}, {'name': '实际合作', 'type': 'line', 'smooth': 'true', 'data': [5, 11, 23, 31, 23, 13, 0, 0, 0]}, {'name': '口头冲突', 'type': 'line', 'smooth': 'true', 'data': [3, 4, 19, 10, 12, 6, 0, 1, 0]}, {'name': '实际冲突', 'type': 'line', 'smooth': 'true', 'data': [4, 6, 20, 20, 21, 33, 0, 0, 0]}]};
+
+    var event_code_map_reverse={1: '官方声明', 2: '上诉', 3: '表达合作意向', 4: '咨询',
+                5: '从事外交合作', 6: '开展物质合作', 7: '提供援助', 8: '投降', 9: '研究',
+                10: '需求', 11: '反对', 12: '拒绝', 13: '威胁', 14: '抗议', 15: '展示力量部署',
+                16: '减少联系', 17: '强迫', 18: '突击', 19: '战斗',20:'非常规大规模暴力'}
+    draw_hot_charts('quadclass_graph', '数据时间线', data);
+    for(var i=1;i<=20;i++)
+    {
+        //$('#quad'+i).text(event_code_map_reverse[i]+'时间线');
+        data_all[i]['legend'][0]=event_code_map_reverse[i]+'时间线';
+        draw_hot_charts('quadclass_'+i, '数据时间线', data_all[i]);
+    }
+    function split2list(text) {   //将字符串中的,分隔开，得到list
         //缺少类型的转换 eventcode
-        list=text.split(',');
+        list = text.split(',');
         return list;
     }
-    function date_split(date)
-    {
+    function date_split(date) {
         //将DATE转换为8位字符串形式
-        date_list=date.split('-');
-        res="";
-        if(date_list.length==3)
-            res=date_list[0]+date_list[1]+date_list[2];
+        date_list = date.split('-');
+        res = "";
+        if (date_list.length == 3)
+            res = date_list[0] + date_list[1] + date_list[2];
         return res;
     }
-    function list2int(list)
-    {
+    function list2int(list) {
         //将EVENT中的字符串转换为INT
-        res=[];
-        l=list.length;
-        for(var i=0;i<l;i++)
-        {
+        res = [];
+        l = list.length;
+        for (var i = 0; i < l; i++) {
             res.push(parseInt(list[i]));
         }
         return res;
     }
-    function click1()
-    {
+    function click1() {
         //获取表单内容，转换为LIST并且将格式转换，发送GET
         actor1 = $('#actor1').val();
         actor2 = $('#actor2').val();
-        event=$('#event').val();
-        startdate=$('#start').val();
-        enddate=$('#end').val();
-        actor1=split2list(actor1);
-        actor2=split2list(actor2);
-        event=list2int(split2list(event));
-        startdate=date_split(startdate);
-        enddate=date_split(enddate);
+        event = $('#event').val();
+        startdate = $('#start').val();
+        enddate = $('#end').val();
+        actor1 = split2list(actor1);
+        actor2 = split2list(actor2);
+        event = list2int(split2list(event));
+        startdate = date_split(startdate);
+        enddate = date_split(enddate);
         console.log(actor1);
         console.log(actor2);
         console.log(event);
         console.log(startdate);
         console.log(enddate);
-        $.get('api/event',{'actor1':actor1,'actor2':actor2,'code':event,'start':startdate,'end':enddate},function (data) {
+        $.get('api/event', { 'actor1': actor1, 'actor2': actor2, 'code': event, 'start': startdate, 'end': enddate }, function (data) {
             console.log(data);
             draw_chart(data);
         });
     }
-    var data2={'口头合作': {'hot': [[1522512000000, 6], [1522598400000, 13], [1522684800000, 25], [1522771200000, 38],
-            [1522857600000, 29], [1522944000000, 11], [1523289600000, 4], [1523721600000, 1], [1523808000000, 1],
-            [1524067200000, 89], [1524153600000, 103], [1524240000000, 57], [1524326400000, 77], [1524412800000, 138],
-            [1524499200000, 104], [1524585600000, 105], [1524672000000, 103], [1524758400000, 60], [1524844800000, 33],
-            [1524931200000, 21], [1525017600000, 21], [1525104000000, 25], [1525190400000, 38], [1525276800000, 50],
-            [1525363200000, 47], [1525449600000, 14], [1525536000000, 57], [1525622400000, 77], [1525708800000, 55],
-            [1525795200000, 79], [1525881600000, 30], [1525968000000, 40], [1526054400000, 18], [1527004800000, 1],
-            [1527091200000, 1], [1527177600000, 19], [1527350400000, 23], [1527436800000, 2]], 'max_value': 138, 'min_value': 0},
-        '实际合作': {'hot': [[1522512000000, 3], [1522598400000, 5], [1522684800000, 18], [1522771200000, 11], [1522857600000, 13],
-            [1522944000000, 11], [1523116800000, 1], [1523462400000, 1], [1523548800000, 1], [1523980800000, 1],
-            [1524067200000, 1], [1524153600000, 4], [1524326400000, 2], [1524412800000, 2], [1524499200000, 3],
-            [1524585600000, 4], [1524672000000, 8], [1524758400000, 6], [1524844800000, 4], [1524931200000, 6],
-            [1525017600000, 8], [1525104000000, 4], [1525190400000, 8], [1525276800000, 6], [1525363200000, 9],
-            [1525449600000, 4], [1525536000000, 6], [1525622400000, 5], [1525708800000, 7], [1525795200000, 9],
-            [1525881600000, 3], [1525968000000, 8], [1526054400000, 2], [1527177600000, 2], [1527264000000, 1],
-            [1527350400000, 3], [1527436800000, 1]], 'max_value': 18, 'min_value': 0},
-        '口头冲突': {'hot': [[1522512000000, 4], [1522598400000, 6], [1522684800000, 21], [1522771200000, 20],
-            [1522857600000, 21], [1522944000000, 33], [1523462400000, 2], [1524067200000, 97],
-            [1524153600000, 141], [1524240000000, 87], [1524326400000, 109], [1524412800000, 204],
-            [1524499200000, 182], [1524585600000, 128], [1524672000000, 126], [1524758400000, 82],
-            [1524844800000, 35], [1524931200000, 8], [1525017600000, 13], [1525104000000, 41],
-            [1525190400000, 22], [1525276800000, 36], [1525363200000, 24], [1525449600000, 16],
-            [1525536000000, 46], [1525622400000, 77], [1525708800000, 70], [1525795200000, 84],
-            [1525881600000, 31], [1525968000000, 13], [1526054400000, 19], [1526140800000, 1],
-            [1526918400000, 1], [1527004800000, 4], [1527091200000, 1], [1527177600000, 22],
-            [1527350400000, 30]], 'max_value': 204, 'min_value': 0},
-        '实际冲突':{'hot':[]}};
     function draw_chart(data) {
         //绘制热度和情感值曲线
         var chart = null;
@@ -307,33 +346,33 @@
                 }
             },
             series: [{
-                    type: 'spline',
-                    name: '口头合作',
-                    data: data['口头合作']["hot"],
-                    yAxis: 0,
-                    selected: true
-                },
-                {
-                    type: 'spline',
-                    name: '实际合作',
-                    data: data['实际合作']["hot"],
-                    yAxis: 0,
-                    selected: true
-                },
-                {
-                    type: 'spline',
-                    name: '口头冲突',
-                    data: data['口头冲突']["hot"],
-                    yAxis: 0,
-                    selected: true
-                },
-                {
-                    type: 'spline',
-                    name: '实际冲突',
-                    data: data['实际冲突']["hot"],
-                    yAxis: 0,
-                    selected: true
-                },
+                type: 'spline',
+                name: '口头合作',
+                data: data['口头合作']["hot"],
+                yAxis: 0,
+                selected: true
+            },
+            {
+                type: 'spline',
+                name: '实际合作',
+                data: data['实际合作']["hot"],
+                yAxis: 0,
+                selected: true
+            },
+            {
+                type: 'spline',
+                name: '口头冲突',
+                data: data['口头冲突']["hot"],
+                yAxis: 0,
+                selected: true
+            },
+            {
+                type: 'spline',
+                name: '实际冲突',
+                data: data['实际冲突']["hot"],
+                yAxis: 0,
+                selected: true
+            },
             ]
         });
     }
