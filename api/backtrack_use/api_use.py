@@ -674,6 +674,70 @@ def no6_news_hot_search(actor1,actor2,event,start,end):
     print(ret_data)
     return ret_data
 
+def no6_news_hot_all_search(actor1,actor2,event,start,end):
+    #方案六的热度，先查询事件数据库，再找GKG中counts的时间数目，返回时间轴热度图，返回具体事件和4个大类的结果
+    #event是基于eventrootcode查询
+    #输出需要data2html的过滤
+    # actor1 = ["", "USA"]
+    # actor2 = ["China", ""]
+    # event = [1, 2]
+    sent_set=set()
+    ret_all={}
+    event=range(9,13)
+    for event_code in event:
+        # 循环搜索eventrootcode
+        cnt = 0
+        total_length = len(actor1)
+        while cnt < total_length:
+            # 对于每一对actor做一次查询，统计出现的次数
+            dict = {'actor1name': actor1[cnt], 'actor2name': actor2[cnt], 'eventrootcode': event_code,
+                    'sqldate': {'$gte': start, '$lte': end}}
+            print(dict)
+            res = events_tracking.find(dict)
+            for item in res:
+                #获取sentid,存入SET中，便于统计新闻数据
+                sent_set.add(senid2index(item['sentid'])[0])
+            cnt += 1
+        sent_list=list(sent_set)
+        #print(sent_list)
+
+        #构造返回数据的字典，时间值
+        ret_data = create_time_dict(start, end)
+        #print(ret_data)
+
+        # 获取原新闻数据
+        res = origin.find({'story_id': {"$in": sent_list}})
+        #print(res)
+
+        while True:
+            try:
+                item=res.next()
+                try:
+                    if 'o_gt' in item:
+                        # 查看原文时间
+                        time_tmp = time.strftime("%Y%m%d", time.localtime(item['o_gt']))
+                        if time_tmp in ret_data:
+                            # 若时间在搜索范围内
+                            if item['gkg']['counts']=='':
+                                ret_data[time_tmp]+=1
+                            else:
+                                ret_data[time_tmp]+=gkg_counts_total(item['gkg']['counts'])
+                except:
+                    continue
+            except StopIteration:
+                print('finished')
+                break
+            except Exception as e:
+                print(e)
+
+        ret_data = data2html(ret_data)
+        ret_data = one_hot2target(ret_data)
+        ret_all[event_code]=ret_data
+    print(ret_all) #按照事件类型分别统计的结果综合
+    ret_4_all=event_all_4_conclusion(ret_all) #4个大类的整合结果
+    print(ret_4_all)
+    return ret_all,ret_4_all
+
 def no7_news_only_search(actor1,actor2,start,end,top,num=0):
     #方案七，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，再返回相关地名
     #输入与no1相同,返回前10位地名及出现次数
