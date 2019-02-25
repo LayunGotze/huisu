@@ -2,11 +2,15 @@ import pymongo
 
 
 # Collections initialization
-
+client=pymongo.MongoClient(host='111.205.121.89',port=14201)
+db=client.en_event
+db.authenticate("gyc", "123456")
+events_tracking=db.events_tracking
+origin=db.origin
 origin = db['origin']
 parsed = db['parsed']
 
-cor = origin.find({'o_gt':{'$gt':1522512000, '$lt':1533052800 }})
+cor = origin.find({'o_gt':{'$gt':1538323200, '$lt':1541001600 }})
 
 
 while True:
@@ -29,5 +33,4 @@ while True:
         break
     except Exception as e:
         print(e)
-
-
+print("finish")

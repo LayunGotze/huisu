@@ -1,9 +1,9 @@
 import time
 import re
-from api.backtrack_use.mongodb_link import origin,events_tracking
+from api.backtrack_use.mongodb_link import *
 from api.backtrack_use.event_basic_use import *
 import json
-#from progressbar import *
+
 """
 事件回溯9个方案所需要的接口函数
 每个函数输入相关信息，进行查询统计，返回前端可展示的数据
@@ -322,7 +322,7 @@ def no4_news_hot_all_search(actor1,actor2,event,start,end):
     tmp_dict={'name':'','type':'line','smooth':'true','data':[]}
     total_length=len(actor1)
     total_event=0
-    for event_code in range(1,21):
+    for event_code in event:
         #循环搜索所有eventrootcode
         data['legend'].append(event_code_map_english[event_code])
         tmp_dict={'name':'','type':'line','smooth':'true','data':[]}
@@ -361,21 +361,23 @@ def no4_news_hot_all_search(actor1,actor2,event,start,end):
         data['data'][cnt]['data']=tmp_list
         cnt+=1
 
-    #统计四个大类的热度曲线
-    time_length=len(data['time'])
-    data['legend']=['口头合作','实际合作','口头冲突','实际冲突']
-    data['data2']=[]
-    for i in range(1,5):
-        data['data2'].append({'name':data['legend'][i-1],'type':'line','smooth':'true','data':[0]*time_length})
-    for i in range(0,20):
-        for j in range(0,time_length):
-            data['data2'][(int)(i/5)]['data'][j]+=data['data'][i]['data'][j]
-    data['data']=data['data2']
-    data.pop('data2')
-    print(data)
-    print("!!!")
-    print(ret_data)
-    return data,ret_data
+    # #统计四个大类的热度曲线
+    # time_length=len(data['time'])
+    # data['legend']=['口头合作','实际合作','口头冲突','实际冲突']
+    # data['data2']=[]
+    # for i in range(1,5):
+    #     data['data2'].append({'name':data['legend'][i-1],'type':'line','smooth':'true','data':[0]*time_length})
+    # for i in range(0,20):
+    #     if i in data['data']:
+    #         for j in range(0,time_length):
+    #             data['data2'][(int)(i/5)]['data'][j]+=data['data'][i]['data'][j]
+    # data['data']=data['data2']
+    # data.pop('data2')
+
+    ret={'all':ret_data}
+    ret['data']=event_all_4_conclusion(ret_data)
+    print(ret)
+    return ret
 
 def no5_news_only_search(actor1,actor2,event,start,end):
     #方案五，先查询事件数据库，再找回新闻本身，统计热度图
@@ -519,10 +521,9 @@ def no5_news_hot_all_search(actor1,actor2,event,start,end):
         #构造返回数据的字典，时间值
         ret_data = create_time_dict(start, end)
         #print(ret_data)
-
+        #print(origin)
         # 获取原新闻数据
         res = origin.find({'story_id': {"$in": sent_list}})
-        #print(res)
 
         while True:
             try:
@@ -545,10 +546,12 @@ def no5_news_hot_all_search(actor1,actor2,event,start,end):
         ret_data = data2html(ret_data)
         ret_data = one_hot2target(ret_data)
         ret_all[event_code]=ret_data
-    print(ret_all) #按照事件类型分别统计的结果综合
+    #按照事件类型分别统计的结果综合
     ret_4_all=event_all_4_conclusion(ret_all) #4个大类的整合结果
-    print(ret_4_all)
-    return ret_all,ret_4_all
+    ret={'data':ret_4_all,'all':ret_all}
+    print(ret)
+    return ret
+
 
 def no6_news_only_search(actor1,actor2,event,start,end,top):
     #方案六，先查询事件数据库，再找GKG，统计国家事件数的统计
@@ -683,7 +686,6 @@ def no6_news_hot_all_search(actor1,actor2,event,start,end):
     # event = [1, 2]
     sent_set=set()
     ret_all={}
-    event=range(9,13)
     for event_code in event:
         # 循环搜索eventrootcode
         cnt = 0
@@ -733,10 +735,16 @@ def no6_news_hot_all_search(actor1,actor2,event,start,end):
         ret_data = data2html(ret_data)
         ret_data = one_hot2target(ret_data)
         ret_all[event_code]=ret_data
-    print(ret_all) #按照事件类型分别统计的结果综合
+    #按照事件类型分别统计的结果综合
     ret_4_all=event_all_4_conclusion(ret_all) #4个大类的整合结果
-    print(ret_4_all)
-    return ret_all,ret_4_all
+    ret={'data':ret_4_all,'all':ret_all}
+    print(ret)
+    return ret
+
+actor1 = ['Jinping Xi','China','']
+actor2 = ['Donald Trump','','USA']
+event=[1,2,3]
+#data=no6_news_hot_all_search(actor1,actor2,event,"20180401","20180410")
 
 def no7_news_only_search(actor1,actor2,start,end,top,num=0):
     #方案七，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，再返回相关地名
@@ -1036,10 +1044,10 @@ def no9_news_hot_search(actor1, actor2, start, end,num=0):
 
 #data=no3_news_only_search(actor1,actor2,"20180506","20180515",num=2000,top=11)
 
-actor1 = ['Xi Jinping', 'China','Xi','China','Jinping Xi','China','']
-actor2 = ['Trump', 'USA','Trump','United States','Donald Trump','','USA']
-event=[1,2,3,4]
-
+actor1 = ['Jinping Xi','China','']
+actor2 = ['Donald Trump','','USA']
+event=[1,2,3]
+#data=no4_news_hot_all_search(actor1,actor2,event,"20180401","20180430")
 #data=no4_news_only_search(actor1,actor2,event,"20180401","20180430")
 #print(data)
 
@@ -1057,10 +1065,7 @@ event=[1,2,3,4]
 #{'o_gt': {'$gte': 1522368000, '$lte': 1526342400}}
 #{'o_gt': {'$gte': 1522339200, '$lte': 1526313600}}
 #create_time_dict("20180501","20180515")
-dict={}
-#with open('data.txt','r') as f:
-with open('api/backtrack_use/data.txt','r') as f:
-    dict=json.loads(f.read())
+
 
 actor1 = ["China", "China", "Japan", "", "USA"]
 actor2 = ["USA", "Trump", "USA", "China", ""]
