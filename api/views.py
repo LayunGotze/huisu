@@ -46,7 +46,7 @@ def event_track(request):
 def event_track_no1(request):
     #方案1，根据提供的人名输入和时间直接搜索新闻数据
     #返回热度图所需数据
-    return JsonResponse(dict['1'])
+    #return JsonResponse(dict['1'])
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     start = request.GET.get('start', '')
@@ -61,7 +61,7 @@ def event_track_no1(request):
 def event_track_no2(request):
     #方案2，根据提供的人名输入和时间先搜索新闻数据，再联立事件数据库
     #返回热度图所需数据
-    return JsonResponse(dict['2'])
+    #return JsonResponse(dict['2'])
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     start = request.GET.get('start', '')
@@ -76,7 +76,7 @@ def event_track_no2(request):
 def event_track_no3(request):
     #方案3，根据提供的输入和时间先搜索新闻数据，再联立GKG数据库
     #返回top个热门人物曲线所需数据
-    return JsonResponse(dict['3'])
+    #return JsonResponse(dict['3'])
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     start = request.GET.get('start', '')
@@ -85,7 +85,7 @@ def event_track_no3(request):
     print(actor2)
     print(start)
     print(end)
-    data = no3_news_only_search(actor1, actor2, start, end,num=2000,top=11)
+    data = no3_news_hot_search(actor1, actor2, start, end, num=2000)
     return JsonResponse(data)
 
 
@@ -195,8 +195,6 @@ def event_track_no6(request):
 
 def event_track_no7(request):
     # 方案7，根据ACTOR搜索GKG数据库，返回国家统计图
-    res={'name': ['美国', '印尼', '俄罗斯', '伊朗', '以色列', '韩国', '德国', '朝鲜 北朝鲜', '圣文森特和格林纳丁斯', '英国', '中国', '肯尼亚', '洪都拉斯', '法国', '日本', '中国香港'], 'hot': [144, 51, 25, 23, 15, 11, 11, 9, 8, 7, 7, 5, 5, 3, 3, 3]}
-    return JsonResponse(dict['7'])
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     start = request.GET.get('start', '')
@@ -205,13 +203,12 @@ def event_track_no7(request):
     print(actor2)
     print(start)
     print(end)
-    data = no7_news_only_search(actor1, actor2, start, end)
+    data = no7_news_hot_search(actor1, actor2, start, end, num=2000)
     return JsonResponse(data)
 
 
 def event_track_no8(request):
     # 方案8，根据ACTOR搜索GKG数据库，再查看英文新闻，返回时间热度图
-    return JsonResponse(dict['8'])
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     start = request.GET.get('start', '20181011')
@@ -220,13 +217,12 @@ def event_track_no8(request):
     print(actor2)
     print(start)
     print(end)
-    data = no8_news_only_search(actor1, actor2, start, end)
+    data = no8_news_only_search(actor1, actor2, start, end,num=2000)
     return JsonResponse(data)
 
 
 def event_track_no9(request):
     # 方案9，根据ACTOR搜索GKG数据库，再查看事件数据库，返回10个最热人物
-    return JsonResponse(dict['9'])
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
     start = request.GET.get('start', '20181011')
@@ -235,5 +231,5 @@ def event_track_no9(request):
     print(actor2)
     print(start)
     print(end)
-    data = no9_news_only_search(actor1, actor2, start, end)
+    data = no9_news_hot_search(actor1, actor2, start, end,num=2000)
     return JsonResponse(data)

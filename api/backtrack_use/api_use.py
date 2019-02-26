@@ -28,7 +28,6 @@ def no1_news_only_search(actor1,actor2,start,end,num=0):
         res=origin.find(dict).limit(num)
     #10000条就很慢了
 
-    #pbar = ProgressBar().start()
     while True:
         try:
             item=res.next()
@@ -55,8 +54,6 @@ def no1_news_only_search(actor1,actor2,start,end,num=0):
         except Exception as e:
             print(e)
     ret_data=data2html(ret_data)
-
-    #pbar.finish()
     ret_data=one_hot2target(ret_data)
     print(ret_data)
     return ret_data

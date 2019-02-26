@@ -17,6 +17,7 @@
     <script src="{% static 'js/hot_chart.js' %}"></script>
     <script src="{% static 'js/hot_chart2.js' %}"></script>
     <script type="text/javascript" src="{%static "js/echarts.js" %}"></script>
+    <script type="text/javascript" src="{%static "js/info_base.js" %}"></script>
 </head>
 
 <body>
@@ -71,7 +72,7 @@
             //draw_rank_chart(data, 'container', '热门人物图', 'person', 'hot');
         })
     }
-    data={'time': ['20180506', '20180507', '20180508', '20180509', '20180510', '20180511', '20180512', '20180513', '20180514', '20180515'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [11, 0, 0, 0, 0, 0, 0, 0, 0, 0]}]}
-    draw_hot_charts('quadclass_graph','数据时间线',data)
+    //data={'time': ['20180506', '20180507', '20180508', '20180509', '20180510', '20180511', '20180512', '20180513', '20180514', '20180515'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [11, 0, 0, 0, 0, 0, 0, 0, 0, 0]}]}
+    //draw_hot_charts('quadclass_graph','数据时间线',data)
     //draw_chart(data2,'container','热门人物图','person','hot');
 </script>
