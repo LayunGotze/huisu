@@ -101,7 +101,7 @@ def create_time_dict(start,end):
         time_tmp = time.strftime("%Y%m%d", time.localtime(begin))
         ret_data[time_tmp] = 0
         begin = begin + 86400
-    print(ret_data)
+    #print(ret_data)
     return ret_data
 
 def gkg_person_list(data):
@@ -150,7 +150,7 @@ def data2html(data):
     ret['hot'].sort()
     ret['max_value']=max_value
     ret['min_value']=min_value
-    print(ret)
+    #print(ret)
     return ret
 
 def rankdata(data,key_name,value_name):

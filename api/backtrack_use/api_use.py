@@ -337,44 +337,86 @@ def no4_news_hot_all_search(actor1,actor2,event,start,end):
             cnt+=1
         #统计各小类事件的热度
         ret_data[event_code]=one_hot2target(data2html(tmp_dict['data']))
-        print(tmp_dict)
-        data['data'].append(tmp_dict)
         total_event+=1
-    #按照eventrootcode依此进行类型转换，以适应前端输入格式
-    start_int = timestr2stamp10(start)
-    end_int = timestr2stamp10(end)
-    begin = start_int + 86400
-    while begin <= end_int:
-        # 生成从START到END的日期，ret_data为返回数据
-        time_tmp = time.strftime("%Y%m%d", time.localtime(begin))
-        begin = begin + 86400
-        data['time'].append(time_tmp)
-    cnt=0
-    for item in data['data']:
-        #print(item['data'])
-        tmp_list=[]
-        for key in item['data']:
-            tmp_list.append(item['data'][key])
-        data['data'][cnt]['data']=tmp_list
-        cnt+=1
-
-    # #统计四个大类的热度曲线
-    # time_length=len(data['time'])
-    # data['legend']=['口头合作','实际合作','口头冲突','实际冲突']
-    # data['data2']=[]
-    # for i in range(1,5):
-    #     data['data2'].append({'name':data['legend'][i-1],'type':'line','smooth':'true','data':[0]*time_length})
-    # for i in range(0,20):
-    #     if i in data['data']:
-    #         for j in range(0,time_length):
-    #             data['data2'][(int)(i/5)]['data'][j]+=data['data'][i]['data'][j]
-    # data['data']=data['data2']
-    # data.pop('data2')
 
     ret={'all':ret_data}
     ret['data']=event_all_4_conclusion(ret_data)
     print(ret)
     return ret
+
+
+def no4_news_hot_all_search_from_origin(actor1, actor2, event, start, end, num=0):
+    # 热度版方案4，返回时间轴热度图，以及20个事件的热度曲线，以及4种大类型事件的热度
+    # event为list，对应查询数据库的eventrootcode字段
+    # 直接查询源数据库，依次筛选
+    ret_data = {}
+    time_dict = create_time_dict(start, end)
+    print(time_dict)
+    data = {'time': [], 'legend': [], 'data': []}
+    tmp_dict = {'name': '', 'type': 'line', 'smooth': 'true', 'data': []}
+    total_length = len(actor1)
+    total_event = 0
+    for event_code in event:
+        # 建立返回数据集
+        data['legend'].append(event_code_map_english[event_code])
+        tmp_dict = {'name': '', 'type': 'line', 'smooth': 'true', 'data': []}
+        tmp_dict['name'] = event_code_map_english[event_code]
+        tmp_dict['data'] = create_time_dict(start, end)
+        # 统计各小类事件的热度
+        ret_data[event_code] = tmp_dict['data']
+        total_event += 1
+
+    #开始按照时间检索源数据库
+    # 先根据日期生成字典，便于统计
+    dict = {"o_gt": {"$gte": timestr2stamp10(start), "$lte": timestr2stamp10(end)}}
+    print(dict)
+    cnt = 0
+    total = len(actor1)
+    if num == 0:
+        res = origin.find(dict)
+    else:
+        res = origin.find(dict).limit(num)
+
+    while True:
+        try:
+            item = res.next()
+            try:
+                if 'events' in item:
+                    event_cnt=0
+                    time_tmp = time.strftime("%Y%m%d", time.localtime(item['o_gt']))
+                    while str(event_cnt) in item['events']:
+                        # 遍历每个事件中的actor1name,actor2name
+                        eventcode=item['events'][str(event_cnt)]['eventrootcode']
+                        if eventcode in event:
+                            name1 = item['events'][str(event_cnt)]['actor1name']
+                            name2 = item['events'][str(event_cnt)]['actor2name']
+                            if name1 in actor1 and name2 in actor2:
+                                a1=actor1.index(name1)
+                                a2=actor2.index(name2)
+                                if a1==a2 and 'sqldate' in item['events'][str(event_cnt)] and item['events'][str(event_cnt)]['sqldate'] in time_dict:
+                                    ret_data[eventcode][item['events'][str(event_cnt)]['sqldate']]+=1
+                        event_cnt+=1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+
+
+    #整合数据结构，转换为前端展示格式
+    for event_code in event:
+        ret_data[event_code]=one_hot2target(data2html(ret_data[event_code]))
+    ret = {'all': ret_data}
+    ret['data'] = event_all_4_conclusion(ret_data)
+    print(ret)
+    return ret
+
+actor1 = [""]
+actor2 = [""]
+event = range(1,21)
+#no4_news_hot_all_search_from_origin(actor1,actor2,event,"20180401","20180410",num=2000)
 
 def no5_news_only_search(actor1,actor2,event,start,end):
     #方案五，先查询事件数据库，再找回新闻本身，统计热度图
@@ -549,6 +591,83 @@ def no5_news_hot_all_search(actor1,actor2,event,start,end):
     print(ret)
     return ret
 
+
+def no5_news_hot_all_search_from_origin(actor1, actor2, event, start, end, num=0):
+    #方案五的所有热度图实现，先查询事件数据库，再找回新闻本身，统计热度图，按照事件类型依次统计
+    #event是基于eventrootcode查询
+    # 直接查询源数据库，依次筛选
+    ret_data = {}
+    time_dict = create_time_dict(start, end)
+    data = {'time': [], 'legend': [], 'data': []}
+    tmp_dict = {'name': '', 'type': 'line', 'smooth': 'true', 'data': []}
+    total_length = len(actor1)
+    total_event = 0
+    for event_code in event:
+        # 建立返回数据集
+        data['legend'].append(event_code_map_english[event_code])
+        tmp_dict = {'name': '', 'type': 'line', 'smooth': 'true', 'data': []}
+        tmp_dict['name'] = event_code_map_english[event_code]
+        tmp_dict['data'] = create_time_dict(start, end)
+        # 统计各小类事件的热度
+        ret_data[event_code] = tmp_dict['data']
+        total_event += 1
+
+    #开始按照时间检索源数据库
+    # 先根据日期生成字典，便于统计
+    dict = {"o_gt": {"$gte": timestr2stamp10(start), "$lte": timestr2stamp10(end)}}
+    print(dict)
+    cnt = 0
+    total = len(actor1)
+    if num == 0:
+        res = origin.find(dict)
+    else:
+        res = origin.find(dict).limit(num)
+
+    while True:
+        try:
+            item = res.next()
+            try:
+                if 'events' in item and 'o_gt' in item:
+                    event_cnt=0
+                    time_tmp = time.strftime("%Y%m%d", time.localtime(item['o_gt']))
+                    event_set=set() #若一篇文章含有多个相同类型事件，在这个事件类型下只算一次
+                    while str(event_cnt) in item['events']:
+                        # 遍历每个事件中的actor1name,actor2name
+                        eventcode=item['events'][str(event_cnt)]['eventrootcode']
+                        if eventcode in event:
+                            name1 = item['events'][str(event_cnt)]['actor1name']
+                            name2 = item['events'][str(event_cnt)]['actor2name']
+                            if name1 in actor1 and name2 in actor2:
+                                a1=actor1.index(name1)
+                                a2=actor2.index(name2)
+                                if a1==a2 and 'o_gt' in item:
+                                    event_set.add(eventcode)
+                        event_cnt+=1
+                    event_set=list(event_set)
+                    for eventcode in event_set:
+                        ret_data[eventcode][time_tmp] += 1
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+
+
+    #整合数据结构，转换为前端展示格式
+    for event_code in event:
+        ret_data[event_code]=one_hot2target(data2html(ret_data[event_code]))
+    ret = {'all': ret_data}
+    ret['data'] = event_all_4_conclusion(ret_data)
+    print(ret)
+    return ret
+
+
+actor1 = ["China"]
+actor2 = [""]
+event = [1,2,3,14,19]
+#no5_news_hot_all_search_from_origin(actor1,actor2,event,"20180401","20180410",num=2000)
 
 def no6_news_only_search(actor1,actor2,event,start,end,top):
     #方案六，先查询事件数据库，再找GKG，统计国家事件数的统计
@@ -738,10 +857,86 @@ def no6_news_hot_all_search(actor1,actor2,event,start,end):
     print(ret)
     return ret
 
-actor1 = ['Jinping Xi','China','']
-actor2 = ['Donald Trump','','USA']
-event=[1,2,3]
-#data=no6_news_hot_all_search(actor1,actor2,event,"20180401","20180410")
+def no6_news_hot_all_search_from_origin(actor1, actor2, event, start, end, num=0):
+    #方案六的热度，先查询事件数据库，再找GKG中counts的时间数目，返回时间轴热度图，返回具体事件和4个大类的结果
+    #event是基于eventrootcode查询
+    # 直接查询源数据库，依次筛选
+    ret_data = {}
+    time_dict = create_time_dict(start, end)
+    data = {'time': [], 'legend': [], 'data': []}
+    tmp_dict = {'name': '', 'type': 'line', 'smooth': 'true', 'data': []}
+    total_length = len(actor1)
+    total_event = 0
+    for event_code in event:
+        # 建立返回数据集
+        data['legend'].append(event_code_map_english[event_code])
+        tmp_dict = {'name': '', 'type': 'line', 'smooth': 'true', 'data': []}
+        tmp_dict['name'] = event_code_map_english[event_code]
+        tmp_dict['data'] = create_time_dict(start, end)
+        # 统计各小类事件的热度
+        ret_data[event_code] = tmp_dict['data']
+        total_event += 1
+
+    #开始按照时间检索源数据库
+    # 先根据日期生成字典，便于统计
+    dict = {"o_gt": {"$gte": timestr2stamp10(start), "$lte": timestr2stamp10(end)}}
+    print(dict)
+    cnt = 0
+    total = len(actor1)
+    if num == 0:
+        res = origin.find(dict)
+    else:
+        res = origin.find(dict).limit(num)
+
+    while True:
+        try:
+            item = res.next()
+            try:
+                if 'events' in item and 'o_gt' in item:
+                    event_cnt=0
+                    time_tmp = time.strftime("%Y%m%d", time.localtime(item['o_gt']))
+                    event_set=set() #若一篇文章含有多个相同类型事件，在这个事件类型下只算一次
+                    while str(event_cnt) in item['events']:
+                        # 遍历每个事件中的actor1name,actor2name
+                        eventcode=item['events'][str(event_cnt)]['eventrootcode']
+                        if eventcode in event:
+                            name1 = item['events'][str(event_cnt)]['actor1name']
+                            name2 = item['events'][str(event_cnt)]['actor2name']
+                            if name1 in actor1 and name2 in actor2:
+                                a1=actor1.index(name1)
+                                a2=actor2.index(name2)
+                                if a1==a2 and 'o_gt' in item:
+                                    event_set.add(eventcode)
+                        event_cnt+=1
+                    event_set=list(event_set)
+                    #统计GKG的事件个数
+                    gkg_count=1
+                    if item['gkg']['counts'] != '':
+                        gkg_count= gkg_counts_total(item['gkg']['counts'])
+                    for eventcode in event_set:
+                        ret_data[eventcode][time_tmp] += gkg_count
+            except:
+                continue
+        except StopIteration:
+            print('finished')
+            break
+        except Exception as e:
+            print(e)
+
+
+    #整合数据结构，转换为前端展示格式
+    for event_code in event:
+        ret_data[event_code]=one_hot2target(data2html(ret_data[event_code]))
+    ret = {'all': ret_data}
+    ret['data'] = event_all_4_conclusion(ret_data)
+    print(ret)
+    return ret
+
+
+actor1 = [""]
+actor2 = [""]
+event = range(1,21)
+#no6_news_hot_all_search_from_origin(actor1,actor2,event,"20180401","20180410",num=2000)
 
 def no7_news_only_search(actor1,actor2,start,end,top,num=0):
     #方案七，先查询GKG（根据事件查新闻找GKG部分，再判断GKG中的persons是否包含人名，再返回相关地名
