@@ -391,10 +391,10 @@ def no4_news_hot_all_search_from_origin(actor1, actor2, event, start, end, num=0
                             name1 = item['events'][str(event_cnt)]['actor1name']
                             name2 = item['events'][str(event_cnt)]['actor2name']
                             if name1 in actor1 and name2 in actor2:
-                                a1=actor1.index(name1)
-                                a2=actor2.index(name2)
-                                if a1==a2 and 'sqldate' in item['events'][str(event_cnt)] and item['events'][str(event_cnt)]['sqldate'] in time_dict:
-                                    ret_data[eventcode][item['events'][str(event_cnt)]['sqldate']]+=1
+                                for a1, a2 in zip(actor1, actor2):
+                                    if a1 == name1 and a2 == name2:
+                                        if 'sqldate' in item['events'][str(event_cnt)] and item['events'][str(event_cnt)]['sqldate'] in time_dict:
+                                            ret_data[eventcode][item['events'][str(event_cnt)]['sqldate']]+=1
                         event_cnt+=1
             except:
                 continue
@@ -638,10 +638,9 @@ def no5_news_hot_all_search_from_origin(actor1, actor2, event, start, end, num=0
                             name1 = item['events'][str(event_cnt)]['actor1name']
                             name2 = item['events'][str(event_cnt)]['actor2name']
                             if name1 in actor1 and name2 in actor2:
-                                a1=actor1.index(name1)
-                                a2=actor2.index(name2)
-                                if a1==a2 and 'o_gt' in item:
-                                    event_set.add(eventcode)
+                                for a1, a2 in zip(actor1, actor2):
+                                    if a1 == name1 and a2 == name2 and 'o_gt' in item:
+                                        event_set.add(eventcode)
                         event_cnt+=1
                     event_set=list(event_set)
                     for eventcode in event_set:
@@ -903,10 +902,9 @@ def no6_news_hot_all_search_from_origin(actor1, actor2, event, start, end, num=0
                             name1 = item['events'][str(event_cnt)]['actor1name']
                             name2 = item['events'][str(event_cnt)]['actor2name']
                             if name1 in actor1 and name2 in actor2:
-                                a1=actor1.index(name1)
-                                a2=actor2.index(name2)
-                                if a1==a2 and 'o_gt' in item:
-                                    event_set.add(eventcode)
+                                for a1, a2 in zip(actor1, actor2):
+                                    if a1 == name1 and a2 == name2 and 'o_gt' in item:
+                                        event_set.add(eventcode)
                         event_cnt+=1
                     event_set=list(event_set)
                     #统计GKG的事件个数
@@ -1313,3 +1311,7 @@ ret8={'hot': [[1522339200000, 55], [1522425600000, 0], [1522512000000, 0], [1522
 ret9={'hot': [[1522339200000, 197], [1522425600000, 0], [1522512000000, 0], [1522598400000, 0], [1522684800000, 0], [1522771200000, 0], [1522857600000, 0], 
 [1522944000000, 0], [1523030400000, 0], [1523116800000, 0], [1523203200000, 0], [1523289600000, 0]], 'max_value': 197, 'min_value': 0}
 """
+dict={}
+with open('api/backtrack_use/data2.txt','r') as f:
+    dict=json.loads(f.read())
+print(dict['1'])
