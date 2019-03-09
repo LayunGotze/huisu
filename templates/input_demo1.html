@@ -1,6 +1,6 @@
+{% extends 'base_event2.html' %}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-
 <head>
     <meta charset="utf-8">
     <link rel="icon" href="https://static.jianshukeji.com/highcharts/images/favicon.ico">
@@ -20,16 +20,13 @@
 </head>
 
 <body>
-    <div id="test">
-        <span>施事者姓名:</span><input type="text" name="actor1_1" id="actor1_1" />
-        <span>受事者姓名:</span><input type="text" name="actor1_2" id="actor1_2" />
-        <span>事件:</span><input type="text" name="event" id="event" />
-        <span>开始时间</span><input type="date" name="start" id="start" />
-        <span>截止时间</span><input type="date" name="end" id="end" />
-        <input type="button" onclick="click3()" value="Submit" />
-        <button onclick="click2()"><span>添加</span></button>
-    </div>
-    <div class="col-md-10">
+    {% block event_title %}
+        <h1>方案1</h1>
+    {% endblock %}
+    {% block chart %}
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
                     <h1>根类数据时间线</h1>
@@ -39,15 +36,20 @@
                     <div id="quadclass_graph" style="width: 100%;height: 600px"></div>
                 </div>
             </div>
+            <div class="col-md-2"></div>
+        </div>
+    {% endblock %}
 </body>
 
 </html>
 
-<script>
+    {% block js %}
+        {{ block.super }}
+        <script>
     var cnt = 1;
     function click2() {
         cnt++;
-        $('#test').append('<div><span>施事者姓名1:</span><input type="text" name="actor' + cnt + '_1" id="actor' + cnt + '_1" /><span>受事者姓名2:</span><input type="text" name="actor' + cnt + '_2" id="actor' + cnt + '_2" /></div>');
+        $('#actor_div').append('<div class="col-md-6"> <label for="actor1_country" class="control-label"><h4>角色1</h4></label><input type="text" class="form-control" name="actor1_1" id="actor'+cnt+'_1" placeholder="actor1"> </div> <div class="col-md-6"> <label for="actor2_country" class="control-label"><h4>角色2</h4></label> <input type="text" class="form-control" name="actor1_2" id="actor'+cnt+'_2" placeholder="actor2"> </div>');
     }
     function click3() {
         var actor1_list = [], actor2_list = [];
@@ -70,4 +72,5 @@
             draw_hot_charts('quadclass_graph','数据时间线',data)
         })
     };
-</script>
+    </script>
+    {% endblock %}

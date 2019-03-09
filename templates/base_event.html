@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    {% block event_title %}
+    {% endblock %}
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="form-group event-time col-md-8">
+            <div>
+                <h3 class="headline first-child"><span class="fa fa-calendar"> 日期属性</span></h3>
+                <p>限制分析的时间间隔。分析的最早时间为1979年，最近时间为今天。格式如：2010-02-02。</p>
+                <p>当前数据库时间范围：</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="start_time"><h4>选择日期：<span class="star">*</span></h4></label>
+                    <input type="date" class="form-control" name="start" id="start" placeholder="输入日期">
+                </div>
+                <div class="col-md-6">
+                    <label for="start_time"><h4>选择日期：<span class="star">*</span></h4></label>
+                    <input type="date" class="form-control" name="end" id="end" placeholder="输入日期">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2">
+        </div>
+        <div class="form-group event-time col-md-8">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3 class="headline first-child"><span class="fa fa-street-view"> 角色属性</span></h3>
+                    <p>选择事件相关的角色类型。事件的角色是通过角色1作用于角色2来进行编码的。</p>
+                    <p>用户选择角色1，则展示以角色1为主体的事件；选择角色2，则展示角色2为受体的事件。</p>
+                </div>
+                <div class="col-md-4">
+                    <button id="add_button" onclick="click2()" class="btn btn-primary" style="margin-top: 30px">
+                        <span class="fa"></span> 添加
+                    </button>
+                </div>
+            </div>
+            <div class="row" id="actor_div">
+                <div class="col-md-6">
+                    <label for="actor1_country" class="control-label"><h4>角色1</h4></label>
+                    <input type="text" class="form-control" name="actor1_1" id="actor1_1" placeholder="actor1">
+                </div>
+                <div class="col-md-6">
+                    <label for="actor2_country" class="control-label"><h4>角色2</h4></label>
+                    <input type="text" class="form-control" name="actor1_2" id="actor1_2" placeholder="actor2">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="form-group event-time col-md-8">
+            <div>
+                <h3 class="headline first-child"><span class="fa fa-comments"> 事件属性</span></h3>
+
+                <p>确定事件的类型和事件的位置。</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="event_root_code"><h4>基事件编码</h4></label>
+                    <select id="code" name="event_root_code" class="form-control">
+                        <option value="口头合作">口头合作</option>
+                        <option value="实际合作">实际合作</option>
+                        <option value="合作">合作</option>
+                        <option value="口头冲突">口头冲突</option>
+                        <option value="实际冲突">实际冲突</option>
+                        <option value="冲突">冲突</option>
+                        <option value="全部">全部</option>
+                    </select>
+
+                </div>
+
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-2"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-2"></div>
+         <div class="col-md-6">
+             <div>
+                 <button id="submit_button" type="submit" class="btn btn-lg btn-primary submit-button"><span
+                         class="fa fa-check"></span> 提交
+                 </button>
+             </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    {% block chart %}
+    {% endblock %}
+
+{% endblock %}
+{% block js %}
+    {{ block.super }}
+    {% load staticfiles %}
+    <script src="{% static 'js/hot_chart.js' %}"></script>
+    <script src="{% static 'js/hot_chart2.js' %}"></script>
+    <script type="text/javascript" src="{%static "js/echarts.js" %}"></script>
+    <script type="text/javascript" src="{%static "js/info_base.js" %}"></script>
+    <script type="text/javascript">
+    $('#add-date-form').on('click', function () {
+            var item = $('#date_form').clone();
+            item.css('display',"");
+            item.insertBefore($('.add-btn'));
+        });
+    $("#submit_button").click(function () {
+        $(this.span).removeClass("fa-check");
+        $(this.span).addClass("fa-spinner fa-spin");
+        $(this).text(function(i, text){
+          return text = "提交中....";
+      })
+        click3();
+    });
+    $(document).ready(function() {
+        $('#event_page').addClass('active');
+    });
+    </script>
+{% endblock %}

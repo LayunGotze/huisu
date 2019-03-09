@@ -24,3 +24,7 @@ function list2int(list) {
     }
     return res;
 }
+function click2() {
+        cnt++;
+        $('#actor_div').append('<div class="col-md-6"> <label for="actor1_country" class="control-label"><h4>角色1</h4></label><input type="text" class="form-control" name="actor1_1" id="actor'+cnt+'_1" placeholder="actor1"> </div> <div class="col-md-6"> <label for="actor2_country" class="control-label"><h4>角色2</h4></label> <input type="text" class="form-control" name="actor1_2" id="actor'+cnt+'_2" placeholder="actor2"> </div>');
+}

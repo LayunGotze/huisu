@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 
 def test(request):
-    return render(request,'event_timeline_type_viz_res.html')
+    return render(request,'base_event.html')
 
 def get_demo(request):
     return render(request,'get_demo.html')
