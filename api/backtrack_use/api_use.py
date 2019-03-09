@@ -18,7 +18,7 @@ def no1_news_only_search(actor1,actor2,start,end,num=0):
     #先根据日期生成字典，便于统计
     ret_data=create_time_dict(start,end)
 
-    dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
+    dict={"s_pt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
     print(dict)
     cnt=0
     total=len(actor1)
@@ -32,7 +32,7 @@ def no1_news_only_search(actor1,actor2,start,end,num=0):
         try:
             item=res.next()
             try:
-                if 's_cont' in item and 'o_gt' in item:
+                if 's_cont' in item and 's_pt' in item:
                     # 查看原文，统计出现次数
                     cnt=0
                     while cnt<total:
@@ -41,7 +41,7 @@ def no1_news_only_search(actor1,actor2,start,end,num=0):
                         res2 = re.search(actor2[cnt], item['s_cont'])
                         if res1 is not None and res2 is not None:
                             #若两个任命都有，将出现时间的热度加一
-                            time_tmp=time.strftime("%Y%m%d",time.localtime(item['o_gt']))
+                            time_tmp=time.strftime("%Y%m%d",time.localtime(item['s_pt']))
                             if time_tmp in ret_data:
                                 ret_data[time_tmp]+=1
                             break
@@ -64,7 +64,7 @@ def no2_news_only_search(actor1,actor2,start,end,num=0):
 
     ret_data = create_time_dict(start, end)
 
-    dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
+    dict={"s_pt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
     print(dict)
     cnt=0
     total=len(actor1)
@@ -76,7 +76,7 @@ def no2_news_only_search(actor1,actor2,start,end,num=0):
         try:
             item=res.next()
             try:
-                if 's_cont' in item and 'o_gt' in item:
+                if 's_cont' in item and 's_pt' in item:
                     # 查询文章中是否出现了这两个人名
                     cnt=0
                     while cnt<total:
@@ -88,7 +88,7 @@ def no2_news_only_search(actor1,actor2,start,end,num=0):
                             while str(event_cnt) in item['events']:
                                 event_cnt += 1
                             if event_cnt!=0:
-                                time_tmp=time.strftime("%Y%m%d",time.localtime(item['o_gt']))
+                                time_tmp=time.strftime("%Y%m%d",time.localtime(item['s_pt']))
                                 if time_tmp in ret_data:
                                     ret_data[time_tmp]+=event_cnt
                             break
@@ -166,7 +166,7 @@ def no3_news_hot_search(actor1,actor2,start,end,num=0):
     #返回的是前10位的排名数据，KEY和VALUE分开
     ret_data = create_time_dict(start, end)
 
-    dict={"o_gt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
+    dict={"s_pt":{"$gte":timestr2stamp10(start),"$lte":timestr2stamp10(end)}}
 
     print(dict)
     cnt=0
@@ -180,7 +180,7 @@ def no3_news_hot_search(actor1,actor2,start,end,num=0):
         try:
             item=res.next()
             try:
-                if 's_cont' in item and 'o_gt' in item:
+                if 's_cont' in item and 's_pt' in item:
                     # 查看原文，统计出现次数
                     cnt=0
                     while cnt<total:
@@ -188,7 +188,7 @@ def no3_news_hot_search(actor1,actor2,start,end,num=0):
                         res2 = re.search(actor2[cnt], item['s_cont'])
                         if res1 is not None and res2 is not None:
                             #若包含两个人名，统计GKG数据库中的事件个数
-                            time_tmp=time.strftime("%Y%m%d",time.localtime(item['o_gt']))
+                            time_tmp=time.strftime("%Y%m%d",time.localtime(item['s_pt']))
                             if time_tmp in ret_data:
                                 #若gkg counts为空
                                 if item['gkg']['counts']=='':
@@ -1225,18 +1225,19 @@ def no9_news_hot_search(actor1, actor2, start, end,num=0):
     print(ret_data)
     return ret_data
 
-# actor1 = ['Xi Jinping', 'China']
-# actor2 = ['Trump', 'USA']
+actor1 = ['Xi Jinping', 'China']
+actor2 = ['Trump', 'USA']
 
-#data=no1_news_only_search(actor1,actor2,"20180401","20180420",num=2000)
+data=no1_news_only_search(actor1,actor2,"20180401","20180420",num=2000)
 
-#data=no2_news_only_search(actor1,actor2,"20180506","20180515",num=2000)
+data=no2_news_only_search(actor1,actor2,"20180401","20180420",num=2000)
 
-#data=no3_news_only_search(actor1,actor2,"20180506","20180515",num=2000,top=11)
+data=no3_news_hot_search(actor1,actor2,"20180401","20180420",num=2000)
 
 actor1 = ['Jinping Xi','China','']
 actor2 = ['Donald Trump','','USA']
 event=[1,2,3]
+
 #data=no4_news_hot_all_search(actor1,actor2,event,"20180401","20180430")
 #data=no4_news_only_search(actor1,actor2,event,"20180401","20180430")
 #print(data)
