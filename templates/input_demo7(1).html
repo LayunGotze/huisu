@@ -21,12 +21,12 @@
 
 <body>
     {% block event_title %}
-        <<div class="row">
+        <div class="row">
         <div class="col-md-2"></div>
         <div class="form-group event-time col-md-8">
             <div>
-                <h3 class="headline first-child"><span> 方案1-3</span></h3>
-                <p>查询新闻原文数据库</p>
+                <h3 class="headline first-child"><span> 方案7-9</span></h3>
+                <p>查询gkg数据库</p>
             </div>
         </div>
         <div class="col-md-2"></div>
@@ -38,8 +38,8 @@
             <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
-                    <h1>方案1根类数据时间线</h1>
-                    <p>直接查询英文新闻直接查询英文新闻</p>
+                    <h1>方案7根类数据时间线</h1>
+                    <p>直接查询GD图谱数据库</p>
                     </div>
                 <div class="col-md-12">
                     <div id="quadclass_graph1" style="width: 100%;height: 600px"></div>
@@ -52,8 +52,8 @@
             <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
-                    <h1>方案2根类数据时间线</h1>
-                    <p>首先查询英文新闻数据库，然后将新闻数据关联映射为GD事件数据；最后对GD事件数据进行分析</p>
+                    <h1>方案8根类数据时间线</h1>
+                    <p>首先查询GD图谱数据库，然后将GD图谱数据关联映射为英文新闻数据；最后对英文新闻数据进行分析</p>
                     </div>
                 <div class="col-md-12">
                     <div id="quadclass_graph2" style="width: 100%;height: 600px"></div>
@@ -66,8 +66,8 @@
             <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
-                    <h1>方案3根类数据时间线</h1>
-                    <p>首先查询英文新闻数据库，然后将新闻数据关联映射为GD图谱数据；最后对GD图谱数据进行分析</p>
+                    <h1>方案9根类数据时间线</h1>
+                    <p>首先查询GD图谱数据库，然后将GD图谱数据关联映射为GD事件数据；最后对GD事件数据进行分析</p>
                 </div>
                 <div class="col-md-12">
                     <div id="quadclass_graph3" style="width: 100%;height: 600px"></div>
@@ -104,18 +104,18 @@
         console.log(event);
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/event1/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
+        $.get('/api/event7/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
             console.log(data);
             $('#res1').css('display','inherit');
             draw_hot_charts('quadclass_graph1','数据时间线',data);
         });
-        $.get('/api/event2/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
+        $.get('/api/event8/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
             console.log(data);
             $('#res2').css('display','inherit');
             draw_hot_charts('quadclass_graph2','数据时间线',data);
             //draw_hot_chart(data, 'container', '事件热度曲线图');
         });
-        $.get('/api/event3/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
+        $.get('/api/event9/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
             console.log(data);
             $('#res3').css('display','inherit');
             draw_hot_charts('quadclass_graph3','数据时间线',data);

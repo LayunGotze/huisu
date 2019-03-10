@@ -92,6 +92,8 @@ def event_track_no3(request):
 
 def event_track_no4(request):
     #方案4，根据ACTOR,EVENT和时间搜索事件数据库，对各类事件热度进行回溯
+    all=event_all_conclusion(dict['4']['data'])
+    dict['4']['all']=all
     return JsonResponse(dict['4'])
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
@@ -110,6 +112,8 @@ def event_track_no4(request):
 
 def event_track_no5(request):
     # 方案5，根据ACTOR,EVENT和时间搜索事件数据库，再找回新闻数据库统计热度
+    all=event_all_conclusion(dict['5']['data'])
+    dict['5']['all']=all
     return JsonResponse(dict['5'])
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
@@ -128,6 +132,8 @@ def event_track_no5(request):
 
 def event_track_no6(request):
     # 方案6，根据ACTOR,EVENT和时间搜索事件数据库，再找回GKG统计国家热度
+    all=event_all_conclusion(dict['6']['data'])
+    dict['6']['all']=all
     return JsonResponse(dict['6'])
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')

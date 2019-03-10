@@ -1228,11 +1228,11 @@ def no9_news_hot_search(actor1, actor2, start, end,num=0):
 actor1 = ['Xi Jinping', 'China']
 actor2 = ['Trump', 'USA']
 
-data=no1_news_only_search(actor1,actor2,"20180401","20180420",num=2000)
-
-data=no2_news_only_search(actor1,actor2,"20180401","20180420",num=2000)
-
-data=no3_news_hot_search(actor1,actor2,"20180401","20180420",num=2000)
+# data=no1_news_only_search(actor1,actor2,"20180401","20180420",num=2000)
+#
+# data=no2_news_only_search(actor1,actor2,"20180401","20180420",num=2000)
+#
+# data=no3_news_hot_search(actor1,actor2,"20180401","20180420",num=2000)
 
 actor1 = ['Jinping Xi','China','']
 actor2 = ['Donald Trump','','USA']
