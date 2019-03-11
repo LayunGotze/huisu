@@ -58,9 +58,7 @@
                     <h1>方案5根类数据时间线</h1>
                     <p>首先查询GD事件数据库，然后将GD事件数据关联映射为英文新闻数据；最后对英文新闻数据进行分析</p>
                     </div>
-                <div class="col-md-12">
-                    <div id="quadclass_graph2" style="width: 100%;height: 600px"></div>
-                </div>
+
                 <div class="col-md-12">
                     <div id="quadclass_graph5" style="width: 100%;height: 600px"></div>
                 </div>
@@ -75,9 +73,7 @@
                     <h1>方案6根类数据时间线</h1>
                     <p>首先查询GD事件数据库，然后将GD事件数据关联映射为GD图谱数据；最后对GD图谱数据进行分析</p>
                 </div>
-                <div class="col-md-12">
-                    <div id="quadclass_graph3" style="width: 100%;height: 600px"></div>
-                </div>
+
                 <div class="col-md-12">
                     <div id="quadclass_graph6" style="width: 100%;height: 600px"></div>
                 </div>
@@ -113,23 +109,19 @@
         console.log(event);
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/event4/', { 'actor1': actor1_list, 'actor2': actor2_list, 'event': event, 'start': startdate, 'end': enddate }, function (data) {
+        $.get('/api/events/', { 'actor1': actor1_list, 'actor2': actor2_list, 'event': event, 'start': startdate, 'end': enddate }, function (data) {
+            console.log("!!!!");
             console.log(data);
             $('#res1').css('display','inherit');
-            draw_hot_charts('quadclass_graph1', '数据时间线', data['data']);
-            draw_hot_charts('quadclass_graph4', '数据时间线', data['all']);
-        });
-        $.get('/api/event5/', { 'actor1': actor1_list, 'actor2': actor2_list, 'event': event, 'start': startdate, 'end': enddate }, function (data) {
-            console.log(data);
             $('#res2').css('display','inherit');
-            draw_hot_charts('quadclass_graph2', '数据时间线', data['data']);
-            draw_hot_charts('quadclass_graph5', '数据时间线', data['all']);
-        });
-        $.get('/api/event6/', { 'actor1': actor1_list, 'actor2': actor2_list, 'event': event, 'start': startdate, 'end': enddate }, function (data) {
-            console.log(data);
             $('#res3').css('display','inherit');
-            draw_hot_charts('quadclass_graph3', '数据时间线', data['data']);
-            draw_hot_charts('quadclass_graph6', '数据时间线', data['all']);
+            draw_hot_charts('quadclass_graph1', '数据时间线', data['4']['data']);
+            draw_hot_charts('quadclass_graph4', '数据时间线', data['4']['all']);
+            //draw_hot_charts('quadclass_graph2', '数据时间线', data['5']['data']);
+            draw_hot_charts('quadclass_graph5', '数据时间线', data['5']);
+            //draw_hot_charts('quadclass_graph3', '数据时间线', data['6']['data']);
+            draw_hot_charts('quadclass_graph6', '数据时间线', data['6']);
+            $('#submit_button').text('回溯完成');
         });
     };
     </script>

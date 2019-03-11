@@ -12,5 +12,8 @@ urlpatterns=[
     url('event6/', event_track_no6),
     url('event7/', event_track_no7),
     url('event8/', event_track_no8),
-    url('event9/', event_track_no9)
+    url('event9/', event_track_no9),
+    url('news/',event_track_news),
+    url('events/',event_track_event),
+    url('gkg/',event_track_gkg)
 ]

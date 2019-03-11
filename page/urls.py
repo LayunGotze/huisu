@@ -14,7 +14,7 @@ urlpatterns=[
     url('event7', event7),
     url('event8', event8),
     url('event9', event9),
-    url('news', news),
-    url('event',event),
-    url('gkg',gkg)
+    url('news', news,name='news'),
+    url('event',event,name='event'),
+    url('gkg',gkg,name='gkg')
 ]

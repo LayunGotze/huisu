@@ -104,22 +104,15 @@
         console.log(event);
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/event1/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
+        $.get('/api/news/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
             console.log(data);
             $('#res1').css('display','inherit');
-            draw_hot_charts('quadclass_graph1','数据时间线',data);
-        });
-        $.get('/api/event2/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
-            console.log(data);
             $('#res2').css('display','inherit');
-            draw_hot_charts('quadclass_graph2','数据时间线',data);
-            //draw_hot_chart(data, 'container', '事件热度曲线图');
-        });
-        $.get('/api/event3/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
-            console.log(data);
             $('#res3').css('display','inherit');
-            draw_hot_charts('quadclass_graph3','数据时间线',data);
-            //draw_rank_chart(data, 'container', '热门人物图', 'person', 'hot')
+            draw_hot_charts('quadclass_graph1','数据时间线',data['1']);
+            draw_hot_charts('quadclass_graph2','数据时间线',data['2']);
+            draw_hot_charts('quadclass_graph3','数据时间线',data['3']);
+            $('#submit_button').text('回溯完成');
         });
     };
     </script>

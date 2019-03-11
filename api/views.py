@@ -193,3 +193,45 @@ def event_track_no9(request):
     print(end)
     data = no9_news_hot_search(actor1, actor2, start, end,num=2000)
     return JsonResponse(data)
+
+def event_track_news(request):
+    #方案1，2，3，返回1，2，3的数据
+    actor1 = request.GET.getlist('actor1[]', '')
+    actor2 = request.GET.getlist('actor2[]', '')
+    start = request.GET.get('start', '20181011')
+    end = request.GET.get('end', '20181001')
+    print(actor1)
+    print(actor2)
+    print(start)
+    print(end)
+    data=news_search(actor1,actor2,start,end,num=2000)
+    return JsonResponse(data)
+
+def event_track_event(request):
+    #方案4，5，6
+    actor1 = request.GET.getlist('actor1[]', '')
+    actor2 = request.GET.getlist('actor2[]', '')
+    event = request.GET.get('event', '口头合作')
+    start = request.GET.get('start', '')
+    end = request.GET.get('end', '')
+    event = event_map[event]
+    print(actor1)
+    print(actor2)
+    print(event)
+    print(start)
+    print(end)
+    data=event_search(actor1,actor2,event,start,end)
+    return JsonResponse(data)
+
+def event_track_gkg(request):
+    # 方案7,8,9
+    actor1 = request.GET.getlist('actor1[]', '')
+    actor2 = request.GET.getlist('actor2[]', '')
+    start = request.GET.get('start', '20181011')
+    end = request.GET.get('end', '20181001')
+    print(actor1)
+    print(actor2)
+    print(start)
+    print(end)
+    data=gkg_search(actor1,actor2,start,end)
+    return JsonResponse(data)
