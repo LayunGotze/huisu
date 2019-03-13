@@ -1243,7 +1243,7 @@ def news_search(actor1, actor2, start, end, num=0):
         try:
             item = res.next()
             try:
-                if 's_cont' in item and 's_pt' in item:
+                if 's_cont' in item and 's_pt' in item and item['s_pt'] > 0:
                     # 查看原文，统计出现次数
                     cnt = 0
                     while cnt < total:
@@ -1277,11 +1277,15 @@ def news_search(actor1, actor2, start, end, num=0):
     ret_data_event = create_time_dict(start, end)
     ret_data_gkg = create_time_dict(start, end)
     for item in event_res:
-        if 'dataadded' in item and item['dataadded'] in ret_data_event:
-            ret_data_event[item['dataadded']] += 1
+        #方案2
+        if 'dataadded' in item and item['dataadded'] in ret_data_event and 'nummentions' in item:
+            if item['nummentions'] is int:
+                ret_data_event[item['dataadded']] += item['nummentions']
     for item in gkg_res:
+        # 方案3
         if 'date' in item and item['date'] in ret_data_gkg:
             ret_data_gkg[item['date']] += item['numarts']
+            
     ret_data_event = one_hot2target(data2html(ret_data_event))
     ret_data_gkg = one_hot2target(data2html(ret_data_gkg))
     print(ret_data_event)
@@ -1289,8 +1293,8 @@ def news_search(actor1, actor2, start, end, num=0):
 
     ret = {'1': ret_data, '2': ret_data_event, '3': ret_data_gkg}
     return ret
-actor1 = ["China", "China", "Japan"]
-actor2 = ["USA", "Trump", "USA"]
+#actor1 = ["China", "China", "Japan"]
+#actor2 = ["USA", "Trump", "USA"]
 event = [1, 2, 3, 14, 19]
 #data=news_search(actor1,actor2,"20180401","20180430",num=2000)
 #print(data)
@@ -1315,6 +1319,7 @@ def gkg_search(actor1, actor2, start, end, num=0):
             while cnt < total:
                 if actor1[cnt] in name_set and actor2[cnt] in name_set:
                     # GKG中包含两个人名，统计gkg counts的热度
+                    print(item['persons'])
                     time_tmp = item['date']
                     if time_tmp in ret_data:
                         # 若gkg counts为空
@@ -1373,9 +1378,10 @@ def gkg_search(actor1, actor2, start, end, num=0):
     ret = {'7': ret_data, '8': ret_data_news, '9': ret_data_event}
     print(ret)
     return ret
-
-#data=gkg_search(actor1,actor2,"20180401","20180430",num=30000)
-#print(data)
+actor1=['Xi']
+actor2=['Xi']
+data=gkg_search(actor1,actor2,"20180401","20180430",num=0)
+print(data)
 
 def event_search(actor1, actor2, event_code_list, start, end, num=0):
     # 方案4-6的解决方案
@@ -1421,20 +1427,11 @@ def event_search(actor1, actor2, event_code_list, start, end, num=0):
     ret_data_news = create_time_dict(start, end)
     total = len(actor1)
     for item in news_res:
-        if 's_cont' in item and 's_pt' in item and item['s_pt'] > 0:
+        if 's_pt' in item and item['s_pt'] > 0:
             # 查看原文，统计出现次数
-            cnt = 0
-            while cnt < total:
-                # 查询文章中是否出现了这两个人名
-                res1 = re.search(actor1[cnt], item['s_cont'])
-                res2 = re.search(actor2[cnt], item['s_cont'])
-                if res1 is not None and res2 is not None:
-                    # 若两个人名都有，将出现时间的热度加一,方案1
-                    time_tmp = time.strftime("%Y%m%d", time.localtime(item['s_pt']))
-                    if time_tmp in ret_data_news:
-                        ret_data_news[time_tmp] += 1
-                    break
-                cnt += 1
+            time_tmp = time.strftime("%Y%m%d", time.localtime(item['s_pt']))
+            if time_tmp in ret_data_news:
+                ret_data_news[time_tmp] += 1
     ret_data_news = one_hot2target(data2html(ret_data_news))
     # print(ret_data_news)
 
@@ -1445,21 +1442,13 @@ def event_search(actor1, actor2, event_code_list, start, end, num=0):
     gkg_res_set = set()
     total = len(actor1)
     for item in res:
-        if 'persons' in item and item['persons'] != "":
+        if 'numarts' in item:
             name_set = set(gkg_person_list(item['persons']))  # 转换为SET方便判断
-            cnt = 0
-            while cnt < total:
-                if actor1[cnt] in name_set and actor2[cnt] in name_set:
-                    # GKG中包含两个人名，统计gkg counts的热度
-                    time_tmp = item['date']
-                    if time_tmp in ret_data_gkg:
-                        # 若gkg counts为空
-                        if item['numarts'] == "":
-                            ret_data_gkg[time_tmp] += 1
-                        else:
-                            ret_data_gkg[time_tmp] += item['numarts']
-                    break
-                cnt += 1
+            # 若gkg counts为空
+            if item['numarts'] == "":
+                ret_data_gkg[time_tmp] += 1
+            else:
+                ret_data_gkg[time_tmp] += item['numarts']
 
     ret_data_gkg = one_hot2target(data2html(ret_data_gkg))
     # print(ret_data_gkg)
