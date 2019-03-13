@@ -113,6 +113,27 @@ def gkg_person_list(data):
     list=data.split(';')
     return list
 
+def gkg_organization_list(data):
+    #提取GKG中的组织名称
+    #将gkg中的organization字符串转换成list
+    list=[]
+    if(data==""):
+        return list
+    list=data.split(';')
+    return list
+
+def gkg_location_list(data):
+    #提起GKG中的地点名称，转换为LIST
+    list=[]
+    if data=="":
+        return list
+    res_list=data.split(';')
+    for item in res_list:
+        item_list=item.split('#')
+        if len(item_list)>1:
+            list.append(item_list[1])
+    return list
+
 def gkg_counts_total(text):
     #获取gkg的counts字段中的事件个数:
     return len(text.split(';'))
