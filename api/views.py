@@ -211,16 +211,18 @@ def event_track_event(request):
     #方案4，5，6
     actor1 = request.GET.getlist('actor1[]', '')
     actor2 = request.GET.getlist('actor2[]', '')
-    event = request.GET.get('event', '口头合作')
+    event = request.GET.get('event', 1)
     start = request.GET.get('start', '')
     end = request.GET.get('end', '')
-    event = event_map[event]
+    event = int(event)
+    event_list=[]
+    event_list.append(event)
     print(actor1)
     print(actor2)
     print(event)
     print(start)
     print(end)
-    data=event_search(actor1,actor2,event,start,end)
+    data=event_search(actor1,actor2,event_list,start,end)
     return JsonResponse(data)
 
 def event_track_gkg(request):

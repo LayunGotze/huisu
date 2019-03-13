@@ -38,9 +38,8 @@
             <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
-                    <h1>方案1根类数据时间线</h1>
-                    <p>直接查询英文新闻直接查询英文新闻</p>
-                    </div>
+                    <h1>直接查询英文新闻热度时间线</h1>
+                </div>
                 <div class="col-md-12">
                     <div id="quadclass_graph1" style="width: 100%;height: 600px"></div>
                 </div>
@@ -52,7 +51,7 @@
             <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
-                    <h1>方案2根类数据时间线</h1>
+                    <h1>查询新闻原文并关联GD事件热度时间线</h1>
                     <p>首先查询英文新闻数据库，然后将新闻数据关联映射为GD事件数据；最后对GD事件数据进行分析</p>
                     </div>
                 <div class="col-md-12">
@@ -66,7 +65,7 @@
             <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
-                    <h1>方案3根类数据时间线</h1>
+                    <h1>查询新闻原文并关联GD图谱热度时间线</h1>
                     <p>首先查询英文新闻数据库，然后将新闻数据关联映射为GD图谱数据；最后对GD图谱数据进行分析</p>
                 </div>
                 <div class="col-md-12">
@@ -86,7 +85,7 @@
     var cnt = 1;
     function click2() {
         cnt++;
-        $('#actor_div').append('<div class="col-md-6"> <label for="actor1_country" class="control-label"><h4>角色1</h4></label><input type="text" class="form-control" name="actor1_1" id="actor'+cnt+'_1" placeholder="actor1"> </div> <div class="col-md-6"> <label for="actor2_country" class="control-label"><h4>角色2</h4></label> <input type="text" class="form-control" name="actor1_2" id="actor'+cnt+'_2" placeholder="actor2"> </div>');
+        $('#actor_div').append('<div class="col-md-6"> <label for="actor1_country" class="control-label"><h4>角色1</h4></label><input type="text" class="form-control" name="actor1_1" id="actor'+cnt+'_1" placeholder="关键词1"> </div> <div class="col-md-6"> <label for="actor2_country" class="control-label"><h4>角色2</h4></label> <input type="text" class="form-control" name="actor1_2" id="actor'+cnt+'_2" placeholder="关键词1"> </div>');
     }
     function click3() {
         var actor1_list = [], actor2_list = [];
@@ -113,6 +112,7 @@
             draw_hot_charts('quadclass_graph2','数据时间线',data['2']);
             draw_hot_charts('quadclass_graph3','数据时间线',data['3']);
             $('#submit_button').text('回溯完成');
+            alert(data['msg'])
         });
     };
     </script>

@@ -8,8 +8,7 @@
         <div class="form-group event-time col-md-8">
             <div>
                 <h3 class="headline first-child"><span class="fa fa-calendar"> 日期属性</span></h3>
-                <p>限制分析的时间间隔。分析的最早时间为1979年，最近时间为今天。格式如：2010-02-02。</p>
-                <p>当前数据库时间范围：</p>
+                <p>限制分析的时间间隔。分析的最早时间为2018年，最近时间为今天。格式如：2018-04-01。</p>
             </div>
             <div class="row">
                 <div class="col-md-6">
@@ -33,7 +32,7 @@
                 <div class="col-md-8">
                     <h3 class="headline first-child"><span class="fa fa-street-view"> 角色属性</span></h3>
                     <p>选择事件相关的角色类型。事件的角色是通过角色1作用于角色2来进行编码的。</p>
-                    <p>用户选择角色1，则展示以角色1为主体的事件；选择角色2，则展示角色2为受体的事件。</p>
+                    <p>用户选择关键词1，则展示以关键词1为主体的事件；选择关键词2，则展示关键词2为受体的事件。</p>
                 </div>
                 <div class="col-md-4">
                     <button id="add_button" onclick="click2()" class="btn btn-primary" style="margin-top: 30px">
@@ -43,12 +42,12 @@
             </div>
             <div class="row" id="actor_div">
                 <div class="col-md-6">
-                    <label for="actor1_country" class="control-label"><h4>角色1</h4></label>
-                    <input type="text" class="form-control" name="actor1_1" id="actor1_1" placeholder="actor1">
+                    <label for="actor1_country" class="control-label"><h4>关键词1</h4></label>
+                    <input type="text" class="form-control" name="actor1_1" id="actor1_1" placeholder="关键词1">
                 </div>
                 <div class="col-md-6">
-                    <label for="actor2_country" class="control-label"><h4>角色2</h4></label>
-                    <input type="text" class="form-control" name="actor1_2" id="actor1_2" placeholder="actor2">
+                    <label for="actor2_country" class="control-label"><h4>关键词2</h4></label>
+                    <input type="text" class="form-control" name="actor1_2" id="actor1_2" placeholder="关键词1">
                 </div>
             </div>
         </div>
@@ -88,6 +87,9 @@
             item.insertBefore($('.add-btn'));
         });
     $("#submit_button").click(function () {
+        $('#res1').css('display','none');
+        $('#res2').css('display','none');
+        $('#res3').css('display','none');
         $(this.span).removeClass("fa-check");
         $(this.span).addClass("fa-spinner fa-spin");
         $(this).text(function(i, text){

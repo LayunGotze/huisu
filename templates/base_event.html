@@ -67,16 +67,17 @@
             <div class="row">
                 <div class="col-md-6">
                     <label for="event_root_code"><h4>基事件编码</h4></label>
-                    <select id="code" name="event_root_code" class="form-control">
-                        <option value="口头合作">口头合作</option>
-                        <option value="实际合作">实际合作</option>
-                        <option value="合作">合作</option>
-                        <option value="口头冲突">口头冲突</option>
-                        <option value="实际冲突">实际冲突</option>
-                        <option value="冲突">冲突</option>
-                        <option value="全部">全部</option>
+                    <select id="base_code" name="base_code"  class="form-control">
+                        <option value="1">口头合作</option>
+                        <option value="2">实际合作</option>
+                        <option value="3">口头冲突</option>
+                        <option value="4">实际冲突</option>
                     </select>
-
+                </div>
+                <div class="col-md-6">
+                    <label for="event_root_code"><h4>根事件编码</h4></label>
+                    <select id="code" name="event_root_code" class="form-control">
+                    </select>
                 </div>
 
         </div>
@@ -109,12 +110,19 @@
     <script type="text/javascript" src="{%static "js/echarts.js" %}"></script>
     <script type="text/javascript" src="{%static "js/info_base.js" %}"></script>
     <script type="text/javascript">
+    var event_code_map_reverse={1: '官方声明', 2: '上诉', 3: '表达合作意向', 4: '咨询',
+                5: '从事外交合作', 6: '开展物质合作', 7: '提供援助', 8: '投降', 9: '研究',
+                10: '需求', 11: '反对', 12: '拒绝', 13: '威胁', 14: '抗议', 15: '展示力量部署',
+                16: '减少联系', 17: '强迫', 18: '突击', 19: '战斗',20:'非常规大规模暴力'};
     $('#add-date-form').on('click', function () {
             var item = $('#date_form').clone();
             item.css('display',"");
             item.insertBefore($('.add-btn'));
         });
     $("#submit_button").click(function () {
+        $('#res1').css('display','none');
+        $('#res2').css('display','none');
+        $('#res3').css('display','none');
         $(this.span).removeClass("fa-check");
         $(this.span).addClass("fa-spinner fa-spin");
         $(this).text(function(i, text){
@@ -125,5 +133,17 @@
     $(document).ready(function() {
         $('#event_page').addClass('active');
     });
+    $('#base_code').val(-1);
+    $('#base_code').change(function () {
+        var code=$('#base_code option:selected').val();
+        $('#code').empty();
+        code=(code-1)*5;
+        for(var i=1;i<=5;i++)
+        {
+            var tmp=code+i;
+            option='<option value="'+tmp+'">'+event_code_map_reverse[tmp]+'</option>';
+            $('#code').append(option);
+        }
+    })
     </script>
 {% endblock %}
