@@ -1380,8 +1380,8 @@ def gkg_search(actor1, actor2, start, end, num=0):
     return ret
 actor1=['Xi']
 actor2=['Xi']
-data=gkg_search(actor1,actor2,"20180401","20180430",num=0)
-print(data)
+#data=gkg_search(actor1,actor2,"20180401","20180430",num=0)
+#print(data)
 
 def event_search(actor1, actor2, event_code_list, start, end, num=0):
     # 方案4-6的解决方案

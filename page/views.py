@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 
 def test(request):
-    return render(request,'base_event.html')
+    return render(request,'base_event_origin.html')
 
 def get_demo(request):
     return render(request,'get_demo.html')

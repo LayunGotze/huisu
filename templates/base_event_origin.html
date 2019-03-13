@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+    {% block back-info %}
+        <!---背景图与介绍--->
+        <div id="alalysis">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                </div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+    </div>
+    <!---end 背景图与介绍--->
+    {% endblock %}
+    {% block event-time-single %}
+        <div class="form-group event-time">
+            <div>
+                <h3 class="headline first-child"><span class="fa fa-calendar"> 日期属性</span></h3>
+                <p>限制分析的时间间隔。分析的最早时间为1979年，最近时间为今天。格式如：2010-02-02。</p>
+                <p>当前数据库时间范围：2016-10-01至2016-11-17</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="start_time"><h4>选择日期：<span class="star">*</span></h4></label>
+                    <input type="date" class="form-control" name="date" id="start_time" placeholder="输入日期">
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block event-time-contrast %}
+        <div class="form-group event-time">
+            <div>
+                <h3 class="headline first-child"><span class="fa fa-calendar"> 日期属性</span></h3>
+                <p>限制分析的时间间隔。分析的最早时间为1979年，最近时间为今天。格式如：2010-02-02。</p>
+                <p>当前数据库时间范围：2016-10-01至2016-11-17</p>
+            </div>
+            <div class="row">
+                <div id="date_form" style="display: none">
+                    <div class="col-md-6">
+                        <label><h4>开始日期：<span class="star">*</span></h4></label>
+                        <input type="date" class="form-control" name="date_start" id="com_date1"
+                               placeholder="请输入开始日期">
+                    </div>
+                    <div class="col-md-6">
+                        <label><h4>结束日期：<span class="star">*</span></h4></label>
+                        <input type="date" class="form-control" name="date_end" id="com_date2"
+                               placeholder="请输入结束日期">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label><h4>开始日期：<span class="star">*</span></h4></label>
+                    <input type="date" class="form-control" name="date_start" id="com_date1"
+                           placeholder="请输入开始日期">
+                </div>
+                <div class="col-md-6">
+                    <label><h4>结束日期：<span class="star">*</span></h4></label>
+                    <input type="date" class="form-control" name="date_end" id="com_date2"
+                           placeholder="请输入结束日期">
+                </div>
+                <div class="col-md-12 add-btn" style="margin-top: 20px;">
+                    <div id="add-date-form" class="btn btn-primary btn-xs">添加</div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block event-time%}
+        <div class="form-group event-time">
+            <div>
+                <h3 class="headline first-child"><span class="fa fa-calendar"> 日期属性</span></h3>
+
+                <p>限制分析的时间间隔。分析的最早时间为1979年，最近时间为今天。格式如：2010-02-02。</p>
+                <p>当前数据库时间范围：2016-10-01至2016-11-17</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="start_time"><h4>开始日期：<span class="star">*</span></h4></label>
+                    <input type="date" class="form-control" name="start_time" id="start_time" placeholder="输入开始日期">
+
+                </div>
+                <div class="col-md-6">
+                    <label for="end_time"><h4>结束日期：<span class="star">*</span></h4></label>
+                    <input type="date" class="form-control" name="end_time" id="end_time" placeholder="输入结束日期">
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block event-actor-single %}
+        <div class="form-group event-actor">
+            <h3 class="headline first-child"><span class="fa fa-street-view"> 角色属性</span></h3>
+            <p>选择事件相关的角色类型。事件的角色是通过角色1作用于角色2来进行编码的。</p>
+            <p>用户选择角色1，则展示以角色1为主体的事件；选择角色2，则展示角色2为受体的事件。</p>
+            <p>用户两者都选，则展示角色1作用于角色2的事件；两者都不选，则展示所选时间内的所有事件。</p>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="actor1_country" class="control-label"><h4>角色1国家</h4></label>
+                    <select id="actor1_country" name="actor1_country" class="form-control">
+                        <option selected></option>
+                        {% for item in countrylist %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="actor2_country" class="control-label"><h4>角色2国家</h4></label>
+                    <select id="actor2_country" name="actor2_country" class="form-control">
+                        <option selected></option>
+                        {% for item in countrylist %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block event-actor %}
+        <div class="form-group event-actor">
+            <h3 class="headline first-child"><span class="fa fa-street-view"> 角色属性</span></h3>
+
+            <p>选择事件相关的角色类型。事件的角色是通过角色1作用于角色2来进行编码的。</p>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="actor1_country" class="control-label"><h4>角色1国家</h4></label>
+                    <select id="actor1_country" name="actor1_country" class="form-control">
+                        <option selected></option>
+                        {% for item in countrylist %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="actor1_code" class="control-label"><h4>角色1编码</h4></label>
+                    <select id="actor1_code" name="actor1_code" class="form-control">
+                        <option selected></option>
+                        {% for item in actorlist %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="actor2_country" class="control-label"><h4>角色2国家</h4></label>
+                    <select id="actor2_country" name="actor2_country" class="form-control">
+                        <option selected></option>
+                        {% for item in countrylist %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="actor2_code" class="control-label"><h4>角色2编码</h4></label>
+                    <select id="actor2_code" name="actor2_code" class="form-control">
+                        <option selected></option>
+                        {% for item in actorlist %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+        </div>
+    {% endblock %}
+    {% block event-basic %}
+        <div class="form-group event-basic">
+            <div>
+                <h3 class="headline first-child"><span class="fa fa-comments"> 事件属性</span></h3>
+
+                <p>确定事件的类型和事件的位置。</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="event_root_code"><h4>基事件编码</h4></label>
+                    <select id="event_root_code" name="event_root_code" class="form-control">
+                        <option selected></option>
+                        {% for item in eventlist %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+                <div class="col-md-6">
+                    <label for="event_quad_class"><h4>根事件编码</h4></label>
+                    <select id="event_quad_class" name="event_quad_class" class="form-control">
+                        <option selected></option>
+                        {% for item in quadlist %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="event_country"><h4>事件发生位置</h4></label>
+                    <select id="event_country" name="event_country" class="form-control">
+                        <option selected></option>
+                        {% for item in countrylist %}
+                            <option>{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block event-weight %}
+        <div class="form-group event-weight">
+            <div>
+                <h3 class="headline first-child"><span class="fa fa-th-large"> 权重依据</span></h3>
+
+                <p>每个地理位置计算的权重依据，一个事件可能在多篇文章中出现</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="event_weight_options" id="event_weight_options1"
+                                   value="num_mentions" checked> 事件出现次数
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="radio">
+                        <label>
+                            <input type="radio" name="event_weight_options" id="event_weight_options2"
+                                   value="num_articles"> 出现该事件的文章数
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+    {% block event-thresholds %}
+        <div class="form-group event-thresholds">
+            <div>
+                <h3 class="headline first-child"><span class="fa fa-filter"> 事件阈值过滤</span></h3>
+
+                <p>如果事件数目太大，可以使用阈值进行过滤</p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="event_node"><h4>节点阈值</h4></label>
+                    <input type="text" class="form-control" name="event_node" id="event_node" placeholder="输入节点数">
+
+                </div>
+                <div class="col-md-6">
+                    <label for="event_edge"><h4>边阈值</h4></label>
+                    <input type="text" class="form-control" name="event_edge" id="event_edge" placeholder="输入边数">
+                </div>
+            </div>
+        </div>
+
+    {% endblock %}
+    {% block event-submit %}
+        <div class="form-group event-submit">
+            <div class="row">
+                <div class="col-md-6">
+                    <button id="submit_button" type="submit" class="btn btn-lg btn-primary submit-button"><span
+                            class="fa fa-check"></span> 提交
+                    </button>
+                </div>
+                <div class="col-md-6"></div>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+    $('#add-date-form').on('click', function () {
+            var item = $('#date_form').clone();
+            item.css('display',"");
+            item.insertBefore($('.add-btn'));
+        });
+    $("#submit_button").click(function () {
+        $(this.span).removeClass("fa-check");
+        $(this.span).addClass("fa-spinner fa-spin");
+        $(this).text(function(i, text){
+          return text = "提交中....";
+      })
+    });
+    $(document).ready(function() {
+        $('#event_page').addClass('active');
+    });
+    </script>
+{% endblock %}
