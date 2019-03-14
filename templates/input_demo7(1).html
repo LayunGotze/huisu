@@ -25,8 +25,8 @@
         <div class="col-md-2"></div>
         <div class="form-group event-time col-md-8">
             <div>
-                <h3 class="headline first-child"><span> 方案7-9</span></h3>
-                <p>查询gkg数据库</p>
+                <h3 class="headline first-child"><span>查询图谱数据库</span></h3>
+                <p>查询图谱数据库系列方案</p>
             </div>
         </div>
         <div class="col-md-2"></div>
@@ -38,8 +38,8 @@
             <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
-                    <h1>GD图谱热度时间线</h1>
-                    <p>直接查询GD图谱数据库</p>
+                    <h1>图谱表热度时间线</h1>
+                    <p>直接查询图谱数据库</p>
                     </div>
                 <div class="col-md-12">
                     <div id="quadclass_graph1" style="width: 100%;height: 600px"></div>
@@ -52,8 +52,8 @@
             <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
-                    <h1>GD图谱联立新闻原文热度时间线</h1>
-                    <p>首先查询GD图谱数据库，然后将GD图谱数据关联映射为英文新闻数据；最后对英文新闻数据进行分析</p>
+                    <h1>图谱表联立新闻原文热度时间线</h1>
+                    <p>首先查询图谱数据库，然后将图谱数据关联映射为英文新闻数据；最后对英文新闻数据进行分析</p>
                     </div>
                 <div class="col-md-12">
                     <div id="quadclass_graph2" style="width: 100%;height: 600px"></div>
@@ -66,8 +66,8 @@
             <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
-                    <h1>GD图谱联立GD事件热度时间线</h1>
-                    <p>首先查询GD图谱数据库，然后将GD图谱数据关联映射为GD事件数据；最后对GD事件数据进行分析</p>
+                    <h1>图谱表联立事件热度时间线</h1>
+                    <p>首先查询图谱数据库，然后将图谱数据关联映射为事件数据；最后对事件数据进行分析</p>
                 </div>
                 <div class="col-md-12">
                     <div id="quadclass_graph3" style="width: 100%;height: 600px"></div>
@@ -86,7 +86,7 @@
     var cnt = 1;
     function click2() {
         cnt++;
-        $('#actor_div').append('<div class="col-md-6"> <label for="actor1_country" class="control-label"><h4>角色1</h4></label><input type="text" class="form-control" name="actor1_1" id="actor'+cnt+'_1" placeholder="actor1"> </div> <div class="col-md-6"> <label for="actor2_country" class="control-label"><h4>角色2</h4></label> <input type="text" class="form-control" name="actor1_2" id="actor'+cnt+'_2" placeholder="actor2"> </div>');
+        $('#actor_div').append('<div class="col-md-6"> <label for="actor1_country" class="control-label"><h4>关键词1</h4></label><input type="text" class="form-control" name="actor1_1" id="actor'+cnt+'_1" placeholder="关键词1"> </div> <div class="col-md-6"> <label for="actor2_country" class="control-label"><h4>关键词2</h4></label> <input type="text" class="form-control" name="actor1_2" id="actor'+cnt+'_2" placeholder="关键词2"> </div>');
     }
     function click3() {
         var actor1_list = [], actor2_list = [];
