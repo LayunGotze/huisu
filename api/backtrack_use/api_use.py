@@ -1292,6 +1292,9 @@ def news_search(actor1, actor2, start, end, num=0):
     #print(ret_data_gkg)
 
     ret = {'1': ret_data, '2': ret_data_event, '3': ret_data_gkg,'msg':msg}
+    ret['1_all']=calculate_all(ret['1'])
+    ret['2_all']=calculate_all(ret['2'])
+    ret['3_all']=calculate_all(ret['3'])
     print(ret)
     return ret
 actor1 = ["China"]
@@ -1367,6 +1370,9 @@ def gkg_search(actor1, actor2, start, end, num=0):
     print(ret_data_event)
 
     ret = {'7': ret_data, '8': ret_data_news, '9': ret_data_event,'msg':msg}
+    ret['7_all']=calculate_all(ret['7'])
+    ret['8_all']=calculate_all(ret['8'])
+    ret['9_all']=calculate_all(ret['9'])
     print(ret)
     return ret
 # actor1=['Trump']
@@ -1445,12 +1451,19 @@ def event_search(actor1, actor2, event_code_list, start, end, num=0):
     # print(ret_data_gkg)
 
     ret_data = {'4': ret, '5': ret_data_news, '6': ret_data_gkg,'msg':msg}
+    cnt=0
+    for item in ret_data['4']['data']['data']:
+        for num in item['data']:
+            cnt+=num
+    ret_data['4_all']=cnt
+    ret_data['5_all']=calculate_all(ret_data['5'])
+    ret_data['6_all']=calculate_all(ret_data['6'])
     print(ret_data)
     return ret_data
-# actor1=['China','']
-# actor2=['','USA']
-# event=[1]
-# data=event_search(actor1,actor2,event,"20180401","20180430")
+actor1=['China','']
+actor2=['','USA']
+event=[1]
+#data=event_search(actor1,actor2,event,"20180401","20180430")
 
 
 #actor1 = ['Xi Jinping', 'China']

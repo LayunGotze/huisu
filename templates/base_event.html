@@ -137,6 +137,10 @@
     $('#base_code').change(function () {
         var code=$('#base_code option:selected').val();
         $('#code').empty();
+        var base_code=parseInt(code)+20;
+        console.log(typeof(base_code));
+        option='<option value="'+base_code+'">'+'全部'+'</option>';
+        $('#code').append(option);
         code=(code-1)*5;
         for(var i=1;i<=5;i++)
         {

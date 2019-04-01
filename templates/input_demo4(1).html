@@ -39,6 +39,7 @@
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
                     <h1>事件热度时间线</h1>
+                    <h1 id="numall4">回溯总量:0</h1>
                     <p>查询事件数据库</p>
                     </div>
                 <div class="col-md-12">
@@ -53,6 +54,7 @@
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
                     <h1>事件表联立新闻原文热度时间线</h1>
+                    <h1 id="numall5">回溯总量:0</h1>
                     <p>首先查询事件数据库，然后将事件数据关联映射为英文新闻数据；最后对英文新闻数据进行分析</p>
                     </div>
 
@@ -68,6 +70,7 @@
                 <h3 class="headline first-child"><span class="fa fa-area-chart"></span></h3>
                 <div class="col-md-12">
                     <h1>事件表联立图谱时间线</h1>
+                    <h1 id="numall6">回溯总量:0</h1>
                     <p>首先查询事件数据库，然后将事件数据关联映射为图谱数据；最后对图谱数据进行分析</p>
                 </div>
 
@@ -101,6 +104,7 @@
         enddate = $('#end').val();
         startdate = date_split(startdate);
         enddate = date_split(enddate);
+        event=parseInt(event);
         console.log(actor1_list);
         console.log(actor2_list);
         console.log(event);
@@ -119,6 +123,9 @@
             //draw_hot_charts('quadclass_graph3', '数据时间线', data['6']['data']);
             draw_hot_charts('quadclass_graph6', '数据时间线', data['6']);
             $('#submit_button').text('回溯完成');
+            $('#numall4').text('回溯总量：'+data['4_all']);
+            $('#numall5').text('回溯总量：'+data['5_all']);
+            $('#numall6').text('回溯总量：'+data['6_all']);
             alert(data['msg'])
         });
     };

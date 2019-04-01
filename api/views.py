@@ -214,15 +214,22 @@ def event_track_event(request):
     event = request.GET.get('event', 1)
     start = request.GET.get('start', '')
     end = request.GET.get('end', '')
-    event = int(event)
-    event_list=[]
-    event_list.append(event)
+    event=int(event)
+    if event > 20:
+        event -= 20
+        event_list = []
+        event = (event - 1) * 5
+        for i in range(1,6):
+            event_list.append(event + i)
+        event=event_list
+    else:
+        event=[event]
     print(actor1)
     print(actor2)
     print(event)
     print(start)
     print(end)
-    data=event_search(actor1,actor2,event_list,start,end)
+    data=event_search(actor1,actor2,event,start,end)
     return JsonResponse(data)
 
 def event_track_gkg(request):
