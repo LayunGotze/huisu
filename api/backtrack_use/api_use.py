@@ -1273,7 +1273,7 @@ def news_search(actor1, actor2, start, end, num=0):
         msg = "未回溯到数据"
     # 方案2，3，找回gkg和event
     event_res = events.find({'story_id': {'$in': story_id_list}})
-    gkg_res = gkg.find({'story_id': {'$in': story_id_list}})
+    gkg_res = gkg.find({'gkgrecordid': {'$in': story_id_list}})
 
     ret_data_event = create_time_dict(start, end)
     ret_data_gkg = create_time_dict(start, end)
@@ -1283,8 +1283,8 @@ def news_search(actor1, actor2, start, end, num=0):
                 ret_data_event[item['dateadded']] += int(item['nummentions'])
     for item in gkg_res:
         # 方案3
-        if 'date' in item and item['date'] in ret_data_gkg:
-            ret_data_gkg[item['date']] += item['numarts']
+        if 'date' in item and item['date'][0:8] in ret_data_gkg:
+            ret_data_gkg[item['date'][0:8]] += 1
 
     ret_data_event = one_hot2target(data2html(ret_data_event))
     ret_data_gkg = one_hot2target(data2html(ret_data_gkg))
@@ -1315,7 +1315,7 @@ def gkg_search(actor1, actor2, start, end, num=0):
         res = gkg.find(dict)
     else:
         res = gkg.find(dict).limit(num)
-
+    print(res.count())
     gkg_res_set = set()
     for item in res:
         if 'persons' in item and 'locations' in item and 'organizations' in item:
@@ -1326,14 +1326,18 @@ def gkg_search(actor1, actor2, start, end, num=0):
             while cnt < total:
                 if (actor1[cnt] in name_set and actor2[cnt] in name_set) or (actor1[cnt] in location_set and actor2[cnt] in location_set) or (actor1[cnt] in organization_set and actor2[cnt] in organization_set):
                     # GKG中包含两个人名，统计gkg counts的热度
-                    time_tmp = item['date']
+                    time_tmp = item['date'][0:8]
+                    print(time_tmp)
                     if time_tmp in ret_data:
                         # 若gkg counts为空
-                        gkg_res_set.add(item['story_id'])
+                        gkg_res_set.add(item['gkgrecordid'])
+                        ret_data[time_tmp] += 1
+                        """
                         if item['numarts'] == "":
                             ret_data[time_tmp] += 1
                         else:
                             ret_data[time_tmp] += item['numarts']
+                        """
                     break
                 cnt += 1
 
@@ -1435,17 +1439,15 @@ def event_search(actor1, actor2, event_code_list, start, end, num=0):
     # print(ret_data_news)
 
     # 方案6
-    gkg_res = gkg.find({'story_id': {"$in": event_res_list}})
+    gkg_res = gkg.find({'gkgrecordid': {"$in": event_res_list}})
     ret_data_gkg = create_time_dict(start, end)
-    res = gkg.find({'story_id': {"$in": event_res_list}})
+    res = gkg.find({'gkgrecordid': {"$in": event_res_list}})
     gkg_res_set = set()
     total = len(actor1)
     for item in res:
-        if 'numarts' in item:
-            if item['numarts'] == "":
-                ret_data_gkg[time_tmp] += 1
-            else:
-                ret_data_gkg[time_tmp] += item['numarts']
+        time_tmp = item['date'][0:8]
+        if time_tmp in ret_data_gkg:
+            ret_data_gkg[time_tmp] += 1
 
     ret_data_gkg = one_hot2target(data2html(ret_data_gkg))
     # print(ret_data_gkg)
