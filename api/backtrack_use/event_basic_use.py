@@ -4,7 +4,24 @@ import re
 """
 该文件提供了事件回溯接口需要使用到的基本接口函数
 """
-
+country_list=['Afghanistan', 'Anguilla', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 
+'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bouvet Islands', 'Brazil', 'British Indian Ocean Territory', 
+'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Canada', 'Cape Verde', 'Cayman Islands', 
+'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo', 'Costa Rica', "Cote D'Ivorie", 'Croatia', 'Cyprus', 
+'Czech Republic', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Egypt', 'El Salvador', 'Equador', 'Equatorial Guinea', 'Eritrea', 
+'Estonia', 'Ethiopia', 'Falkland Islands', 'Faroe Islands', 'Federated States of Micronesia', 'Fiji', 'Finland', 'France', 'French Guiana', 
+'French Polynesia', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guadeloupe', 'Guam', 'Guatemala', 
+'Guinea','Guinea- Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Israel', 'Italy', 'Jamaica', 
+'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Kuwait', 'Kyrgyzstan', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Liechtenstein', 
+'Lithuania', 'Luxembourg', 'Macau', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Martinique', 'Mauritania', 
+'Mayotte', 'Metropolitan France', 'Mexico', 'Moldova', 'Mongolia', 'Morocco', 'Mozambique', 'Namibia', 'Nauru', 'Nepal', 'Neterlands Antilles', 'Netherlands', 
+'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'North Korea', 'Northern Mariana Islands', 'Norway', 'Oman', 'Pakistan', 'Palau', 'Panama', 
+'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Pitcairn', 'Poland', 'Portugal', 'Puerto Rico', 'Qatar', 'Republic of Ireland', 'Republic of Korea', 
+'Republic of Macedonia', 'Reunion', 'Romania', 'Russia', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Seychelles', 'Singapore', 'Slovakia', 'Slovenia', 
+'Solomon Islands', 'Somalia', 'South Africa', 'Spain', 'Sri Lanka', 'St. Helena', 'St. Kitts and Nevis', 'St. Lucia', 'St. Vincent and the Grenadines', 'Sudan',
+'Suriname', 'Svalbard and Jan Mayen Islands', 'Swaziland', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Togo', 'Tonga', 
+'Trinidad and Tobago', 'Turkey', 'Turkmenistan', 'Turks and Caicos Islands', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates','United Kingdom', 'United States USA',
+ 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Vatican City', 'Venezuela', 'Vietnam', 'Western Sahara', 'Yemen', 'Yugoslavia', 'Zaire', 'Zambia', 'Zimbabwe']
 #国家映射词典，从'CHN'映射到中文名
 country_dict={'AND': '安道尔', 'ARE': '阿联酋', 'AFG': '阿富汗', 'ATG': '安提瓜和巴布达', 'AIA': '安圭拉',
               'ALB': '阿尔巴尼亚', 'ARM': '亚美尼亚', 'AGO': '安哥拉', 'ATA': '南极洲', 'ARG': '阿根廷',
@@ -234,6 +251,31 @@ def calculate_all(data):
     for item in data['data'][0]['data']:
         cnt+=item
     return cnt
+
+def word_in_article(actor_all,actor_one,actor_null,article):
+    pattern='(.*[^a-zA-Z]{word}[^a-zA-Z]).*|({word}[^a-zA-Z].*)|(.*[^a-zA-Z]{word})|({word})'
+    for item in actor_all:
+        match=re.fullmatch(pattern.format(word=item), article, re.IGNORECASE)
+        if match is None:
+            return 0
+    res=0
+    for item in actor_one:
+        match=re.fullmatch(pattern.format(word=item), article, re.IGNORECASE)
+        if match is not None:
+            res=1
+            break
+    if res==0:
+        return 0
+    res=1
+    for item in actor_null:
+        match=re.fullmatch(pattern.format(word=item), article, re.IGNORECASE)
+        if match is not None:
+            return 0
+    return 1
+    
+def word_in_gkg(actor_all,actor_one,actor_null,final_set):
+    final_str=' '.join(list(final_set))
+    return word_in_article(actor_all,actor_one,actor_null,final_str)
 # origin={1: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 18, 40, 48, 25, 20, 0, 0, 0, 0]}]},
 # 2: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [0, 19, 41, 54, 33, 33, 0, 0, 0, 0]}]},
 # 3: {'time': ['20180401', '20180402', '20180403', '20180404', '20180405', '20180406', '20180407', '20180408', '20180409', '20180410'], 'legend': ['事件热度'], 'data': [{'name': ['事件热度'], 'type': 'line', 'smooth': 'true', 'data': [4, 37, 71, 74, 51, 61, 0,0, 0, 0]}]},
