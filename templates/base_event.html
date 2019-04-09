@@ -37,8 +37,8 @@
         <div class="row">
             <div class="col-md-8">
                 <h3 class="headline first-child"><span class="fa fa-street-view"> 角色属性</span></h3>
-                <p>选择事件相关的角色类型，角色1作用于角色2。</p>
-                <p>用户选择角色1，则展示以角色1为主体的事件；选择角色2，则展示角色2为受体的事件。</p>
+                <p>选择事件相关的角色属性，角色1作用于角色2。</p>
+                <p>可以选择每个角色的国家和类型</p>
             </div>
             <div class="col-md-4" style="display: none">
                 <button id="add_button" onclick="click2()" class="btn btn-primary" style="margin-top: 30px">
@@ -51,7 +51,7 @@
                 <label for="actor1_country" class="control-label">
                     <h4>角色1国家</h4>
                 </label>
-                <select name="actor1countrycode" class="form-control" style="width: 400px;">
+                <select name="actor1countrycode" id="actor1countrycode" class="form-control" style="width: 400px;">
                     <option value="" selected=""></option>
                     <option value="AFG">Afghanistan</option>
                     <option value="AFR">Africa</option>
@@ -320,7 +320,7 @@
                 <label for="actor1_country" class="control-label">
                     <h4>角色1类型</h4>
                 </label>
-                <select name="actor1typecode" class="form-control" style="width: 400px;">
+                <select name="actor1typecode" id="actor1typecode" class="form-control" style="width: 400px;">
                     <option value="" selected=""></option>
                     <option value="AGR">Agriculture</option>
                     <option value="AMN">Amnesty International</option>
@@ -368,7 +368,7 @@
                 <label for="actor2_country" class="control-label">
                     <h4>角色2国家</h4>
                 </label>
-                <select name="actor2countrycode" class="form-control" style="width: 400px;">
+                <select name="actor2countrycode" id="actor2countrycode" class="form-control" style="width: 400px;">
                     <option value="" selected=""></option>
                     <option value="AFG">Afghanistan</option>
                     <option value="AFR">Africa</option>
@@ -637,7 +637,7 @@
                 <label for="actor2_country" class="control-label">
                     <h4>角色2类型</h4>
                 </label>
-                <select name="actor2typecode" class="form-control" style="width: 400px;">
+                <select name="actor2typecode" id="actor2typecode" class="form-control" style="width: 400px;">
                     <option value="" selected=""></option>
                     <option value="AGR">Agriculture</option>
                     <option value="AMN">Amnesty International</option>
@@ -693,26 +693,30 @@
             <h3 class="headline first-child"><span class="fa fa-comments"> 事件属性</span></h3>
 
             <p>确定事件的类型和事件的位置。</p>
+            <p>基事件编码和根事件编码为或的关系。</p>
+            <p>若二者都未选择，则默认搜索全部类型</p>
+            <p>若二者选择了一种，则以一种为准</p>
+            <p>若二者都做了选择，则以基事件编码为准</p>
         </div>
         <div class="row">
             <div class="col-md-6">
                 <label for="event_root_code">
                     <h4>基事件编码</h4>
                 </label>
-                <select name="eventcodequadclass" class="form-control" style="width: 400px;">
-                    <option value="" selected=""></option>
-                    <option value="1">Verbal Cooperation</option>
-                    <option value="2">Material Cooperation</option>
-                    <option value="3">Verbal Conflict</option>
-                    <option value="4">Material Conflict</option>
+                <select name="eventcodequadclass" id="eventcodequadclass" class="form-control" style="width: 400px;">
+                    <option value="25" selected=""></option>
+                    <option value="21">Verbal Cooperation</option>
+                    <option value="22">Material Cooperation</option>
+                    <option value="23">Verbal Conflict</option>
+                    <option value="24">Material Conflict</option>
                 </select>
             </div>
             <div class="col-md-6">
                 <label for="event_root_code">
                     <h4>根事件编码</h4>
                 </label>
-                <select name="eventcoderootcat" class="form-control" style="width: 400px;">
-                    <option value="" selected=""></option>
+                <select name="eventcoderootcat" id="eventcoderootcat" class="form-control" style="width: 400px;">
+                    <option value="0" selected=""></option>
                     <option value="01">Make Public Statement (01)</option>
                     <option value="02">Appeal (02)</option>
                     <option value="03">Express Intent to Cooperate (03)</option>
@@ -742,7 +746,7 @@
                 <label for="actor2_country" class="control-label">
                     <h4>事件发生地点</h4>
                 </label>
-                <select name="eventcountry" class="form-control" style="width: 400px;">
+                <select name="eventcountry" id="eventcountry" class="form-control" style="width: 400px;">
                     <option value="" selected=""></option>
                     <option value="AF">Afghanistan</option>
                     <option value="AX">Akrotiri Sovereign Base Area</option>

@@ -94,23 +94,58 @@
         $('#actor_div').append('<div class="col-md-6"> <label for="actor1_country" class="control-label"><h4>角色1</h4></label><input type="text" class="form-control" name="actor1_1" id="actor'+cnt+'_1" placeholder="actor1"> </div> <div class="col-md-6"> <label for="actor2_country" class="control-label"><h4>角色2</h4></label> <input type="text" class="form-control" name="actor1_2" id="actor'+cnt+'_2" placeholder="actor2"> </div>');
     }
     function click3() {
-        var actor1_list = [], actor2_list = [];
-        for (var i = 1; i <= cnt; i++) {
-            actor1_list.push($('#actor' + i + '_1').val());
-            actor2_list.push($('#actor' + i + '_2').val());
-        }
-        event = $('#code option:selected ').val();
+        //alert("!!!");
+        //event = $('#code option:selected ').val();
         startdate = $('#start').val();
         enddate = $('#end').val();
         startdate = date_split(startdate);
         enddate = date_split(enddate);
-        event=parseInt(event);
-        console.log(actor1_list);
-        console.log(actor2_list);
-        console.log(event);
+        actor1country=$('#actor1countrycode option:selected').val();
+        actor1code=$('#actor1typecode option:selected').val();
+        actor2country=$('#actor2countrycode option:selected').val();
+        actor2code=$('#actor2typecode option:selected').val();
+        quadclass=$('#eventcodequadclass option:selected').val();
+        eventrootcode=$('#eventcoderootcat option:selected').val();
+        event_location=$('#eventcountry option:selected').val();
+        if (quadclass)
+        {
+            quadclass=parseInt(quadclass);
+        }
+        if(eventrootcode)
+        {
+            eventrootcode=parseInt(eventrootcode);
+        }
+
+        var event=0;
+        if(quadclass==25 && eventrootcode==0)
+        {
+            event=0; //都为空默认全部搜索
+        }
+        else if(eventrootcode!=0)
+        {
+            event=eventrootcode; //若root不为空，则置为root
+        }
+        else if(quadclass!=25)
+        {
+            event=quadclass //若quadclass不为空，则置为quadclass
+        }
+        if(quadclass!=25 && eventrootcode!=0)
+        {
+            //若都不为空，默认置为quadclass
+            event=quadclass;
+        }
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/events/', { 'actor1': actor1_list, 'actor2': actor2_list, 'event': event, 'start': startdate, 'end': enddate }, function (data) {
+        console.log(actor1country);
+        console.log(actor1code);
+        console.log(actor2country);
+        console.log(actor2code);
+        console.log(quadclass);
+        console.log(eventrootcode);
+        console.log(event);
+        console.log(event_location);
+
+        $.get('/api/events/', { 'actor1country':actor1country,'actor1code':actor1code,'actor2country':actor2country,'actor2code':actor2code, 'location':event_location,'event': event, 'start': startdate, 'end': enddate }, function (data) {
             console.log("!!!!");
             console.log(data);
             $('#res1').css('display','inherit');
