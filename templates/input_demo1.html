@@ -91,22 +91,19 @@
         $('#actor_div').append('<div class="col-md-6"> <label for="actor1_country" class="control-label"><h4>关键词1</h4></label><input type="text" class="form-control" name="actor1_1" id="actor'+cnt+'_1" placeholder="关键词1"> </div> <div class="col-md-6"> <label for="actor2_country" class="control-label"><h4>关键词2</h4></label> <input type="text" class="form-control" name="actor1_2" id="actor'+cnt+'_2" placeholder="关键词2"> </div>');
     }
     function click3() {
-        var actor1_list = [], actor2_list = [];
-        for (var i = 1; i <= cnt; i++) {
-            actor1_list.push($('#actor' + i + '_1').val());
-            actor2_list.push($('#actor' + i + '_2').val());
-        }
-        event = $('#event').val();
         startdate = $('#start').val();
         enddate = $('#end').val();
         startdate = date_split(startdate);
         enddate = date_split(enddate);
-        console.log(actor1_list);
-        console.log(actor2_list);
-        console.log(event);
+        actor_all=$('#actor_all').val();
+        actor_one=$('#actor_one').val();
+        actor_null=$('#actor_null').val();
         console.log(startdate);
         console.log(enddate);
-        $.get('/api/news/', { 'actor1': actor1_list, 'actor2': actor2_list, 'start': startdate, 'end': enddate }, function (data) {
+        console.log(actor_all);
+        console.log(actor_one);
+        console.log(actor_null);
+        $.get('/api/news/', { 'actor_all': actor_all, 'actor_one': actor_one, 'actor_null':actor_null,'start': startdate, 'end': enddate }, function (data) {
             console.log(data);
             $('#res1').css('display','inherit');
             $('#res2').css('display','inherit');

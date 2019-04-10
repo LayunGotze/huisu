@@ -19,15 +19,20 @@ event_map={21:[1,2,3,4,5],22:[6,7,8,9,10],
 
 def event_track_news(request):
     #方案1，2，3，返回1，2，3的数据
-    actor1 = request.GET.getlist('actor1[]', '')
-    actor2 = request.GET.getlist('actor2[]', '')
+    actor_all = request.GET.get('actor_all', '')
+    actor_one = request.GET.get('actor_one', '')
+    actor_null = request.GET.get('actor_null', '')
     start = request.GET.get('start', '20181001')
     end = request.GET.get('end', '20181001')
-    print(actor1)
-    print(actor2)
+    actor_all=actor_all.split()
+    actor_one=actor_one.split()
+    actor_null=actor_null.split()
+    print(actor_all)
+    print(actor_one)
+    print(actor_null)
     print(start)
     print(end)
-    data=news_search(actor1,actor2,start,end,num=2000)
+    data=news_search_final(actor_all,actor_one,actor_null,start,end,num=0)
     return JsonResponse(data)
 
 def event_track_event(request):
@@ -58,13 +63,18 @@ def event_track_event(request):
 
 def event_track_gkg(request):
     # 方案7,8,9
-    actor1 = request.GET.getlist('actor1[]', '')
-    actor2 = request.GET.getlist('actor2[]', '')
-    start = request.GET.get('start', '20181011')
+    actor_all = request.GET.get('actor_all', '')
+    actor_one = request.GET.get('actor_one', '')
+    actor_null = request.GET.get('actor_null', '')
+    start = request.GET.get('start', '20181001')
     end = request.GET.get('end', '20181001')
-    print(actor1)
-    print(actor2)
+    actor_all = actor_all.split()
+    actor_one = actor_one.split()
+    actor_null = actor_null.split()
+    print(actor_all)
+    print(actor_one)
+    print(actor_null)
     print(start)
     print(end)
-    data=gkg_search(actor1,actor2,start,end)
+    data=gkg_search_final(actor_all,actor_one,actor_null,start,end,num=0)
     return JsonResponse(data)
