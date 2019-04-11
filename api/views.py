@@ -24,9 +24,15 @@ def event_track_news(request):
     actor_null = request.GET.get('actor_null', '')
     start = request.GET.get('start', '20181001')
     end = request.GET.get('end', '20181001')
-    actor_all = actor_all.split(';')
-    actor_one = actor_one.split(';')
-    actor_null = actor_null.split(';')
+
+    actor_all = str(actor_all)
+    actor_one = str(actor_one)
+    actor_null = str(actor_null)
+
+    actor_all = [] if actor_all == "" else actor_all.split(';')
+    actor_one = [] if actor_one == "" else actor_one.split(';')
+    actor_null = [] if actor_null == "" else actor_null.split(';')
+
     print(actor_all)
     print(actor_one)
     print(actor_null)
@@ -68,13 +74,20 @@ def event_track_gkg(request):
     actor_null = request.GET.get('actor_null', '')
     start = request.GET.get('start', '20181001')
     end = request.GET.get('end', '20181001')
-    actor_all = actor_all.split(';')
-    actor_one = actor_one.split(';')
-    actor_null = actor_null.split(';')
+
+    actor_all=str(actor_all)
+    actor_one=str(actor_one)
+    actor_null=str(actor_null)
+
+    actor_all = [] if actor_all=="" else actor_all.split(';')
+    actor_one = [] if actor_one=="" else actor_one.split(';')
+    actor_null =[] if actor_null=="" else actor_null.split(';')
+
     print(actor_all)
     print(actor_one)
     print(actor_null)
     print(start)
     print(end)
+
     data=gkg_search_final(actor_all,actor_one,actor_null,start,end,num=0)
     return JsonResponse(data)

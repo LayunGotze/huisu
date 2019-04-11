@@ -260,9 +260,13 @@ def news_search_final(actor_all,actor_one,actor_null,start,end,num=0):
         res = origin.find(dict)
     else:
         res = origin.find(dict).limit(num)
-
+    cnt=0
+    print(res.count())
     while True:
         try:
+            cnt += 1
+            if cnt % 1000 == 0:
+                print(cnt)
             item = res.next()
             try:
                 if 's_cont' in item and 's_pt' in item and item['s_pt'] > 0:
@@ -321,8 +325,13 @@ def gkg_search_final(actor_all,actor_one,actor_null,start,end,num=0):
         res = gkg.find(dict)
     else:
         res = gkg.find(dict).limit(num)
+    print(res.count())
+    cnt=0
     gkg_res_set = set()
     for item in res:
+        cnt+=1
+        if cnt%1000==0:
+            print(cnt)
         if 'persons' in item and 'locations' in item and 'organizations' in item:
             name_set = set(gkg_person_list(item['persons']))  # 转换为SET方便判断
             location_set=set(gkg_location_list(item['locations']))
@@ -446,3 +455,8 @@ def event_search_final(actor1countrycode,actor1typecode,actor2countrycode,actor2
     ret_data['6_all']=calculate_all(ret_data['6'])
     print(ret_data)
     return ret_data
+
+actor_all=['china']
+actor_one=[]
+actor_null=[]
+#gkg_search_final(actor_all,actor_one,actor_null,"20181001","20181007",num=5000)
