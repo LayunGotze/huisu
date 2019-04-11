@@ -264,7 +264,7 @@ def word_in_article(actor_all,actor_one,actor_null,article):
         if match is not None:
             res=1
             break
-    if res==0:
+    if res==0 and len(actor_one)>0:
         return 0
     res=1
     for item in actor_null:
