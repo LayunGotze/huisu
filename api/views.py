@@ -45,8 +45,8 @@ def event_track_event(request):
     #方案4，5，6
 
     event = request.GET.get('event', 0)
-    start = request.GET.get('start', '')
-    end = request.GET.get('end', '')
+    start = request.GET.get('start', '20181001')
+    end = request.GET.get('end', '20181001')
     actor1country = request.GET.get('actor1country', '')
     actor1code = request.GET.get('actor1code', '')
     actor2country = request.GET.get('actor2country', '')

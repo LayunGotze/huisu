@@ -151,6 +151,15 @@ def gkg_location_list(data):
             list.append(item_list[1])
     return list
 
+def gkg_allnames_total(text):
+    res=[]
+    if text=="":
+        return res
+    tmp=text.split(';')
+    for item in tmp:
+        res.append(item.split(',')[0])
+    return res[0:-1]
+
 def gkg_counts_total(text):
     #获取gkg的counts字段中的事件个数:
     return len(text.split(';'))
@@ -253,6 +262,27 @@ def calculate_all(data):
     return cnt
 
 def word_in_article(actor_all,actor_one,actor_null,article):
+    pattern='(.*[^a-zA-Z]{word}[^a-zA-Z]).*|({word}[^a-zA-Z].*)|(.*[^a-zA-Z]{word})|({word})'
+    for item in actor_all:
+        match=re.search(pattern.format(word=item), article, re.IGNORECASE)
+        if match is None:
+            return 0
+    res=0
+    for item in actor_one:
+        match=re.search(pattern.format(word=item), article, re.IGNORECASE)
+        if match is not None:
+            res=1
+            break
+    if res==0 and len(actor_one)>0:
+        return 0
+    res=1
+    for item in actor_null:
+        match=re.search(pattern.format(word=item), article, re.IGNORECASE)
+        if match is not None:
+            return 0
+    return 1
+
+def word_in_article_fullmatch(actor_all,actor_one,actor_null,article):
     pattern='(.*[^a-zA-Z]{word}[^a-zA-Z]).*|({word}[^a-zA-Z].*)|(.*[^a-zA-Z]{word})|({word})'
     for item in actor_all:
         match=re.fullmatch(pattern.format(word=item), article, re.IGNORECASE)

@@ -269,9 +269,11 @@ def news_search_final(actor_all,actor_one,actor_null,start,end,num=0):
                 print(cnt)
             item = res.next()
             try:
-                if 's_cont' in item and 's_pt' in item and item['s_pt'] > 0:
+                if 's_cont' in item and 's_pt' in item:
+                    if item['s_pt'] <= 0:
+                        item['s_pt']=item['o_pt']
                     # 查看原文，统计出现次数
-                    tmp=word_in_article(actor_all,actor_one,actor_null,item['s_cont'])
+                    tmp=word_in_article_fullmatch(actor_all,actor_one,actor_null,item['s_cont'])
                     if tmp==1:
                         time_tmp = time.strftime("%Y%m%d", time.localtime(item['s_pt']))
                         if time_tmp in ret_data:
@@ -297,8 +299,8 @@ def news_search_final(actor_all,actor_one,actor_null,start,end,num=0):
     ret_data_gkg = create_time_dict(start, end)
     for item in event_res:
         #方案2
-        if 'dateadded' in item and item['dateadded'] in ret_data_event and 'nummentions' in item:
-                ret_data_event[item['dateadded']] += int(item['nummentions'])
+        if 'sqldate' in item and item['sqldate'] in ret_data_event and 'nummentions' in item:
+                ret_data_event[item['sqldate']] += int(item['nummentions'])
     for item in gkg_res:
         # 方案3
         if 'date' in item and item['date'][0:8] in ret_data_gkg:
@@ -325,18 +327,18 @@ def gkg_search_final(actor_all,actor_one,actor_null,start,end,num=0):
         res = gkg.find(dict)
     else:
         res = gkg.find(dict).limit(num)
-    print(res.count())
-    cnt=0
     gkg_res_set = set()
+    cnt=0
     for item in res:
-        cnt+=1
-        if cnt%1000==0:
-            print(cnt)
-        if 'persons' in item and 'locations' in item and 'organizations' in item:
+         cnt+=1
+         if cnt%1000==0:
+             print(cnt)
+         if 'persons' in item and 'locations' in item and 'organizations' in item and 'allnames' in item:
             name_set = set(gkg_person_list(item['persons']))  # 转换为SET方便判断
             location_set=set(gkg_location_list(item['locations']))
             organization_set=set(gkg_organization_list(item['organizations']))
-            final_set=name_set|location_set|organization_set
+            allname_set=set(gkg_allnames_total(item['allnames']))
+            final_set=name_set|location_set|organization_set|allname_set
             tmp=word_in_gkg(actor_all,actor_one,actor_null,final_set)
             if tmp==1 and 'date' in item:
                 time_tmp = item['date'][0:8]
@@ -356,8 +358,10 @@ def gkg_search_final(actor_all,actor_one,actor_null,start,end,num=0):
     ret_data_news = create_time_dict(start, end)
 
     for item in news_res:
-        if 's_pt' in item and item['s_pt']>0:
+        if 's_pt' in item:
             # 查看原文，统计出现次数
+            if item['s_pt'] <= 0:
+                item['s_pt'] = item['o_pt']
             time_tmp = time.strftime("%Y%m%d", time.localtime(item['s_pt']))
             if time_tmp in ret_data_news:
                 ret_data_news[time_tmp] += 1
@@ -368,8 +372,8 @@ def gkg_search_final(actor_all,actor_one,actor_null,start,end,num=0):
     event_res = events.find({"story_id": {"$in": gkg_res_list}})
     ret_data_event = create_time_dict(start, end)
     for item in event_res:
-        if item['dateadded'] in ret_data_event and 'nummentions' in item:
-            ret_data_event[item['dateadded']] +=int(item['nummentions'])
+        if item['sqldate'] in ret_data_event and 'nummentions' in item:
+            ret_data_event[item['sqldate']] +=int(item['nummentions'])
         #if item['dateadded'] in ret_data_event:
          #   ret_data_event[item['dateadded']] +=1
     ret_data_event = one_hot2target(data2html(ret_data_event))
@@ -406,8 +410,8 @@ def event_search_final(actor1countrycode,actor1typecode,actor2countrycode,actor2
         print(query_dict)
         res=events.find(query_dict)
         for item in res:
-            if 'dateadded' in item and 'nummentions' in item:
-                tmp_dict['data'][item['dateadded']] += int(item['nummentions'])
+            if 'sqldate' in item and 'nummentions' in item and item['sqldate'] in tmp_dict['data']:
+                tmp_dict['data'][item['sqldate']] += int(item['nummentions'])
                 event_res_set.add(item['story_id'])
         ret_data[event_code] = one_hot2target(data2html(tmp_dict['data']))
     ret = {'all': ret_data}
@@ -424,8 +428,10 @@ def event_search_final(actor1countrycode,actor1typecode,actor2countrycode,actor2
     ret_data_news = create_time_dict(start, end)
 
     for item in news_res:
-        if 's_pt' in item and item['s_pt'] > 0:
+        if 's_pt' in item:
             # 查看原文，统计出现次数
+            if item['s_pt'] <= 0:
+                item['s_pt'] = item['o_pt']
             time_tmp = time.strftime("%Y%m%d", time.localtime(item['s_pt']))
             if time_tmp in ret_data_news:
                 ret_data_news[time_tmp] += 1
